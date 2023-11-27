@@ -14,4 +14,35 @@ public class MemberService {
     public boolean add(Member member) {
         return mapper.insert(member) == 1;
     }
+
+    public boolean validate(Member member) {
+        if (member == null) {
+            return false;
+        }
+
+        if (member.getId().isBlank()) {
+            return false;
+        }
+
+        if (member.getPassword().isBlank()) {
+            return false;
+        }
+
+        if (member.getEmail().isBlank()) {
+            return false;
+        }
+
+        if (member.getGender().isBlank()) {
+            return false;
+        }
+
+        if (member.getPhone().isBlank()) {
+            return false;
+        }
+
+        if (member.getBirthDate().isBlank()) {
+            return false;
+        }
+        return true;
+    }
 }
