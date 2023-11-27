@@ -4,10 +4,7 @@ import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,6 +22,15 @@ public class MemberController {
             }
         } else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(value = "check", params = "id")
+    public ResponseEntity checkId(String id) {
+        if (service.getId(id) == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().build();
         }
     }
 }

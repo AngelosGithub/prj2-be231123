@@ -45,4 +45,8 @@ public class MemberService {
         }
         return true;
     }
+
+    public String getId(String id) {
+        return mapper.selectId(id);
+    }
 }
