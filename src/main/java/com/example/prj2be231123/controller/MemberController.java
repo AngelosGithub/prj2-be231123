@@ -3,8 +3,10 @@ package com.example.prj2be231123.controller;
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,6 +33,15 @@ public class MemberController {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok().build();
+        }
+    }
+
+    @PostMapping("login")
+    public ResponseEntity login(@RequestBody Member member, WebRequest request) {
+        if (service.login(member, request)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 }
