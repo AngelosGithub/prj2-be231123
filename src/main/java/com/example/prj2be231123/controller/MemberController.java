@@ -44,4 +44,11 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+    @GetMapping
+    public ResponseEntity<Member> view(String id) {
+        Member member = service.getMember(id);
+
+        return ResponseEntity.ok(member);
+    }
 }

@@ -67,4 +67,8 @@ public class MemberService {
         }
         return false;
     }
+
+    public Member getMember(String id) {
+        return mapper.selectById(id);
+    }
 }
