@@ -23,4 +23,8 @@ public class ReviewService {
     public Review get(Integer no) {
         return mapper.selectById(no);
     }
+
+    public boolean remove(Integer no) {
+        return mapper.deleteById(no) == 1;
+    }
 }

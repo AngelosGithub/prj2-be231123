@@ -3,6 +3,7 @@ package com.example.prj2be231123.controller;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,5 +32,14 @@ public class ReviewController {
     @GetMapping("no/{no}")
     public Review get(@PathVariable Integer no) {
         return service.get(no);
+    }
+
+    @DeleteMapping("remove/{id}")
+    public ResponseEntity remove(@PathVariable Integer no) {
+        if (service.remove(no)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
