@@ -27,4 +27,8 @@ public class ReviewService {
     public boolean remove(Integer no) {
         return mapper.deleteById(no) == 1;
     }
+
+    public void update(Review review) {
+        mapper.update(review);
+    }
 }

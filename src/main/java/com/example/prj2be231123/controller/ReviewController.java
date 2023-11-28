@@ -42,4 +42,9 @@ public class ReviewController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PutMapping("edit")
+    public void edit(@RequestBody Review review) {
+        service.update(review);
+    }
 }

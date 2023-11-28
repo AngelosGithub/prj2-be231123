@@ -1,10 +1,7 @@
 package com.example.prj2be231123.mapper;
 
 import com.example.prj2be231123.domain.Review;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -36,4 +33,13 @@ public interface ReviewMapper {
             WHERE no = #{no}
             """)
     int deleteById(Integer no);
+
+    @Update("""
+            UPDATE review
+            SET title = #{title},
+                recommend = #{recommend},
+                content = #{content}
+            WHERE no = #{no}
+            """)
+    void update(Review review);
 }
