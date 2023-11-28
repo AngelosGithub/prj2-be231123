@@ -3,6 +3,9 @@ package com.example.prj2be231123.mapper;
 import com.example.prj2be231123.domain.Review;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface ReviewMapper {
@@ -12,4 +15,11 @@ public interface ReviewMapper {
             VALUES (#{title}, #{recommend}, #{content}, #{writer}, #{restaurantId})
             """)
     int insert(Review review);
+
+    @Select("""
+            SELECT no, title, writer, inserted
+            FROM review
+            ORDER BY no DESC
+            """)
+    List<Review> selectAll();
 }
