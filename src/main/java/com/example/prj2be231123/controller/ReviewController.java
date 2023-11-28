@@ -44,7 +44,15 @@ public class ReviewController {
     }
 
     @PutMapping("edit")
-    public void edit(@RequestBody Review review) {
-        service.update(review);
+    public ResponseEntity edit(@RequestBody Review review) {
+        if (service.validate(review)) {
+            if (service.update(review)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

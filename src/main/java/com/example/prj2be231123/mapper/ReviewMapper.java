@@ -41,5 +41,5 @@ public interface ReviewMapper {
                 content = #{content}
             WHERE no = #{no}
             """)
-    void update(Review review);
+    int update(Review review);
 }

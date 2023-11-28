@@ -28,7 +28,26 @@ public class ReviewService {
         return mapper.deleteById(no) == 1;
     }
 
-    public void update(Review review) {
-        mapper.update(review);
+    public boolean update(Review review) {
+        return mapper.update(review) == 1;
+    }
+
+    public boolean validate(Review review) {
+        if (review == null) {
+            return false;
+        }
+
+        if (review.getTitle() == null || review.getTitle().isBlank()) {
+            return false;
+        }
+
+        if (review.getContent() == null || review.getContent().isBlank()) {
+            return false;
+        }
+
+        if (review.getRecommend() == null || review.getRecommend().isBlank()) {
+            return false;
+        }
+        return true;
     }
 }
