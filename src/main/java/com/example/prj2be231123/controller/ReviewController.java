@@ -34,7 +34,7 @@ public class ReviewController {
         return service.get(no);
     }
 
-    @DeleteMapping("remove/{id}")
+    @DeleteMapping("remove/{no}")
     public ResponseEntity remove(@PathVariable Integer no) {
         if (service.remove(no)) {
             return ResponseEntity.ok().build();

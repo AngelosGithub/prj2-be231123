@@ -25,7 +25,7 @@ public interface ReviewMapper {
     List<Review> selectAll();
 
     @Select("""
-            SELECT no, title, content, writer, inserted
+            SELECT no, title, recommend, content, writer, inserted
             FROM review
             WHERE no = #{no}
             """)
