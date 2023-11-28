@@ -22,4 +22,11 @@ public interface ReviewMapper {
             ORDER BY no DESC
             """)
     List<Review> selectAll();
+
+    @Select("""
+            SELECT no, title, content, writer, inserted
+            FROM review
+            WHERE no = #{no}
+            """)
+    Review selectById(Integer no);
 }

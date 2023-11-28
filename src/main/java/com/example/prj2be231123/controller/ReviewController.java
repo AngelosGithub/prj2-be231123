@@ -27,4 +27,9 @@ public class ReviewController {
     public List<Review> list() {
         return service.list();
     }
+
+    @GetMapping("no/{no}")
+    public Review get(@PathVariable Integer no) {
+        return service.get(no);
+    }
 }

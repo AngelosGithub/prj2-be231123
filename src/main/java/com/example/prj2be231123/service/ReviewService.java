@@ -19,4 +19,8 @@ public class ReviewService {
     public List<Review> list() {
         return mapper.selectAll();
     }
+
+    public Review get(Integer no) {
+        return mapper.selectById(no);
+    }
 }
