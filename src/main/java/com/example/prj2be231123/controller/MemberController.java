@@ -58,4 +58,13 @@ public class MemberController {
 
         return ResponseEntity.ok(member);
     }
+
+    @DeleteMapping
+    public ResponseEntity delete(String id) {
+        if (service.deleteMember(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
