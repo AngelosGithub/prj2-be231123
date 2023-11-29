@@ -32,7 +32,7 @@ public interface MemberMapper {
     @Select("""
             SELECT id, nickName, email, inserted
             FROM member
-            WHERE id = #{id}
+            ORDER BY inserted DESC
             """)
     List<Member> selectAll();
 }
