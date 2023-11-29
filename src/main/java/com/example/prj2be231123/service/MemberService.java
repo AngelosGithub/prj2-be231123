@@ -79,4 +79,8 @@ public class MemberService {
     public boolean deleteMember(String id) {
         return mapper.deleteById(id) == 1;
     }
+
+    public String getNickName(String nickName) {
+        return mapper.selectByNick(nickName);
+    }
 }

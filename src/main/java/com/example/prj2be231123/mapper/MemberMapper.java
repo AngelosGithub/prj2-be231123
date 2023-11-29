@@ -42,4 +42,10 @@ public interface MemberMapper {
             WHERE id = #{id}
             """)
     int deleteById(String id);
+
+    @Select("""
+            SELECT nickName FROM member
+            WHERE nickName = #{nickName}
+            """)
+    String selectByNick(String nickName);
 }

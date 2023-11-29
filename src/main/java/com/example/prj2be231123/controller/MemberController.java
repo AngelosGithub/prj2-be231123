@@ -38,6 +38,15 @@ public class MemberController {
         }
     }
 
+    @GetMapping(value = "check", params = "nickName")
+    public ResponseEntity checkNick(String nickName) {
+        if (service.getNickName(nickName) == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
     @PostMapping("login")
     public ResponseEntity login(@RequestBody Member member, WebRequest request) {
         if (service.login(member, request)) {
