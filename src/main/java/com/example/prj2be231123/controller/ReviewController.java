@@ -17,6 +17,10 @@ public class ReviewController {
 
     @PostMapping("add")
     public ResponseEntity add(@RequestBody Review review) {
+        if (!service.validate(review)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         if (service.save(review)) {
             return ResponseEntity.ok().build();
         } else {
