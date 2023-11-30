@@ -83,4 +83,14 @@ public class MemberService {
     public String getNickName(String nickName) {
         return mapper.selectByNick(nickName);
     }
+
+    public boolean update(Member member) {
+//        Member oldMember = mapper.selectById(member.getId());
+//
+//        if (member.getPassword().equals("")) {
+//            member.getPassword(oldMember.getPassword());
+//        }
+
+        return mapper.update(member) == 1;
+    }
 }

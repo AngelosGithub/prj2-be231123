@@ -1,10 +1,7 @@
 package com.example.prj2be231123.mapper;
 
 import com.example.prj2be231123.domain.Member;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -48,4 +45,19 @@ public interface MemberMapper {
             WHERE nickName = #{nickName}
             """)
     String selectByNick(String nickName);
+
+    @Update("""
+            <script>
+            UPDATE member
+            SET 
+            <if test="password != ''">
+            password = #{password},
+            </if>
+            nickName = #{nickName},
+            phone = #{phone},
+            email = #{email}
+            WHERE id = #{id}
+            </script>
+            """)
+    int update(Member member);
 }
