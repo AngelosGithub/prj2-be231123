@@ -48,7 +48,16 @@ public class ReviewController {
     }
 
     @DeleteMapping("remove/{no}")
-    public ResponseEntity remove(@PathVariable Integer no) {
+    public ResponseEntity remove(@PathVariable Integer no,
+                                 @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.hasAccess(no, login)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         if (service.remove(no)) {
             return ResponseEntity.ok().build();
         } else {

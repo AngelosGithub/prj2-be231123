@@ -53,4 +53,10 @@ public class ReviewService {
         }
         return true;
     }
+
+    public boolean hasAccess(Integer no, Member login) {
+        Review review = mapper.selectById(no);
+
+        return review.getWriter().equals(login.getId());
+    }
 }
