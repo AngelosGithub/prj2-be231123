@@ -17,10 +17,9 @@ public class ReviewController {
     private final ReviewService service;
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody Review review, HttpSession session) {
-        Object login = session.getAttribute("login");
-
-        Member loginMember = (Member) login;
+    public ResponseEntity add(@RequestBody Review review,
+                              @SessionAttribute(value = "login", required = false) Member login) {
+        System.out.println("login = " + login);
         // 맛집정보 받아올때까지 주석
 //        if (!service.validate(review)) {
 //            return ResponseEntity.badRequest().build();
