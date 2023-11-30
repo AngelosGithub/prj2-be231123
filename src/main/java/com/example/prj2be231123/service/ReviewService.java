@@ -1,5 +1,6 @@
 package com.example.prj2be231123.service;
 
+import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,9 @@ import java.util.List;
 public class ReviewService {
     private final ReviewMapper mapper;
 
-    public boolean save(Review review) {
+    public boolean save(Review review, Member login) {
+        review.setWriter(login.getId());
+
         return mapper.insert(review) == 1;
     }
 

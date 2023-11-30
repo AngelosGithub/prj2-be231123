@@ -5,6 +5,7 @@ import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,16 @@ public class ReviewController {
     public ResponseEntity add(@RequestBody Review review,
                               @SessionAttribute(value = "login", required = false) Member login) {
         System.out.println("login = " + login);
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         // 맛집정보 받아올때까지 주석
 //        if (!service.validate(review)) {
 //            return ResponseEntity.badRequest().build();
 //        }
 
-        if (service.save(review)) {
+        if (service.save(review, login)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
