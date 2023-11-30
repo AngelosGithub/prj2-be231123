@@ -1,9 +1,10 @@
 package com.example.prj2be231123.controller;
 
+import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.service.ReviewService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,14 @@ public class ReviewController {
     private final ReviewService service;
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody Review review) {
-        if (!service.validate(review)) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity add(@RequestBody Review review, HttpSession session) {
+        Object login = session.getAttribute("login");
+
+        Member loginMember = (Member) login;
+        // 맛집정보 받아올때까지 주석
+//        if (!service.validate(review)) {
+//            return ResponseEntity.badRequest().build();
+//        }
 
         if (service.save(review)) {
             return ResponseEntity.ok().build();
