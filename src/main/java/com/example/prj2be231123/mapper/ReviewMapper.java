@@ -42,4 +42,10 @@ public interface ReviewMapper {
             WHERE no = #{no}
             """)
     int update(Review review);
+
+    @Delete("""
+            DELETE FROM review
+            WHERE writer = #{writer}
+            """)
+    int deleteByWriter(String id);
 }

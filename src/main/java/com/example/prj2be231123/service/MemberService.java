@@ -2,6 +2,7 @@ package com.example.prj2be231123.service;
 
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.mapper.MemberMapper;
+import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberMapper mapper;
+    private final ReviewMapper reviewMapper;
 
 
     public boolean add(Member member) {
@@ -77,6 +79,8 @@ public class MemberService {
     }
 
     public boolean deleteMember(String id) {
+        reviewMapper.deleteByWriter(id);
+
         return mapper.deleteById(id) == 1;
     }
 
