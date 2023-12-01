@@ -93,4 +93,8 @@ public class MemberService {
 
         return mapper.update(member) == 1;
     }
+
+    public boolean hasAccess(String id, Member login) {
+        return login.getId().equals(id);
+    }
 }
