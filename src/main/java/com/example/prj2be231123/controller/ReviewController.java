@@ -66,7 +66,16 @@ public class ReviewController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(@RequestBody Review review) {
+    public ResponseEntity edit(@RequestBody Review review,
+                               @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.hasAccess(review.getNo(), login)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         if (service.validate(review)) {
             if (service.update(review)) {
                 return ResponseEntity.ok().build();
