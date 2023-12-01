@@ -15,14 +15,14 @@ public interface ReviewMapper {
     int insert(Review review);
 
     @Select("""
-            SELECT r.no, r.title, m.nickName writer, r.inserted
+            SELECT r.no, r.title, m.nickName, r.writer, r.inserted
             FROM review r JOIN member m ON r.writer = m.id
             ORDER BY r.no DESC
             """)
     List<Review> selectAll();
 
     @Select("""
-            SELECT r.no, r.title, r.recommend, r.content, m.nickName writer, r.inserted
+            SELECT r.no, r.title, r.recommend, r.content, r.writer, m.nickName, r.inserted
             FROM review r JOIN member m ON r.writer = m.id
             WHERE r.no = #{no}
             """)

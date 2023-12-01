@@ -12,6 +12,7 @@ public class Review {
     private String recommend;
     private String content;
     private String writer;
+    private String nickName;
     private Integer restaurantId;
     private LocalDateTime inserted;
 }
