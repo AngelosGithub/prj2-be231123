@@ -57,6 +57,11 @@ public class MemberController {
         }
     }
 
+    @GetMapping("login")
+    public Member login(@SessionAttribute(value = "login", required = false) Member login) {
+        return login;
+    }
+
     @PostMapping("logout")
     public void logout(HttpSession session) {
         if (session != null) {
