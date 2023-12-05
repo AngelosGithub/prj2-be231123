@@ -41,4 +41,8 @@ public class CommentService {
     public List<Comment> list(Integer reviewId) {
         return mapper.selectByReviewId(reviewId);
     }
+
+    public void remove(Integer no) {
+        mapper.deleteById(no);
+    }
 }

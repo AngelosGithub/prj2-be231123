@@ -45,4 +45,9 @@ public class CommentController {
     public List<Comment> list(@RequestParam("id") Integer reviewId) {
         return service.list(reviewId);
     }
+
+    @DeleteMapping("{no}")
+    public void remove(@PathVariable Integer no) {
+        service.remove(no);
+    }
 }
