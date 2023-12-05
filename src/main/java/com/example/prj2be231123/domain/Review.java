@@ -14,4 +14,5 @@ public class Review {
     private String writer;
     private Integer restaurantId;
     private LocalDateTime inserted;
+    private int starPoint;
 }

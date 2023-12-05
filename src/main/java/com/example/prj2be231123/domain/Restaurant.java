@@ -27,6 +27,8 @@ public class Restaurant {
 
     private  int restaurantType;
 
+    private int starPoint;
+
     private List<RestaurantFile> files;
 
     private List<RestaurantPurpose> purpose;

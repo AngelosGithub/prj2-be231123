@@ -23,13 +23,10 @@ public class RestaurantController {
     private String mapKey;
 
 
-
     @GetMapping("map/key")
     public String key() {
         return mapKey;
     }
-
-
 
 
     @PostMapping("add")
@@ -66,9 +63,10 @@ public class RestaurantController {
 
 
     @GetMapping("no/{no}")
-    public Restaurant get(
+    public HashMap<String, Object> get(
             @PathVariable Integer no
     ){
+
         return service.get(no);
     }
 
