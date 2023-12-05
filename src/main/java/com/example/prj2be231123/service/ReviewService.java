@@ -12,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewMapper mapper;
+    private final MemberService memberService;
 
     public boolean save(Review review, Member login) {
         review.setWriter(login.getId());
@@ -55,6 +56,10 @@ public class ReviewService {
     }
 
     public boolean hasAccess(Integer no, Member login) {
+        if (memberService.isAdmin(login)) {
+            return true;
+        }
+
         Review review = mapper.selectById(no);
 
         return review.getWriter().equals(login.getId());

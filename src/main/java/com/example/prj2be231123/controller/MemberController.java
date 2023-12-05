@@ -57,6 +57,11 @@ public class MemberController {
         }
     }
 
+    @GetMapping("login")
+    public Member login(@SessionAttribute(value = "login", required = false) Member login) {
+        return login;
+    }
+
     @PostMapping("logout")
     public void logout(HttpSession session) {
         if (session != null) {
@@ -70,14 +75,32 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<Member> view(String id) {
+    public ResponseEntity<Member> view(String id,
+                                       @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.hasAccess(id, login)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Member member = service.getMember(id);
 
         return ResponseEntity.ok(member);
     }
 
     @DeleteMapping
-    public ResponseEntity delete(String id) {
+    public ResponseEntity delete(String id,
+                                 @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.hasAccess(id, login)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         if (service.deleteMember(id)) {
             return ResponseEntity.ok().build();
         } else {

@@ -1,7 +1,9 @@
 package com.example.prj2be231123.service;
 
+import com.example.prj2be231123.domain.Auth;
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.mapper.MemberMapper;
+import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberMapper mapper;
+    private final ReviewMapper reviewMapper;
 
 
     public boolean add(Member member) {
@@ -57,8 +60,14 @@ public class MemberService {
     public boolean login(Member member, WebRequest request) {
         Member dbMember = mapper.selectById(member.getId());
 
+
         if (dbMember != null) {
             if (dbMember.getPassword().equals(member.getPassword())) {
+
+                // 멤버 아이디로 권한정보를 얻어서 리스트로 받은 뒤
+                List<Auth> auth = mapper.selectAuthId(member.getId());
+                // 값을 추가
+                dbMember.setAuth(auth);
 
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
@@ -77,6 +86,8 @@ public class MemberService {
     }
 
     public boolean deleteMember(String id) {
+        reviewMapper.deleteByWriter(id);
+
         return mapper.deleteById(id) == 1;
     }
 
@@ -92,5 +103,23 @@ public class MemberService {
 //        }
 
         return mapper.update(member) == 1;
+    }
+
+    public boolean hasAccess(String id, Member login) {
+        if (isAdmin(login)) {
+            return true;
+        }
+
+        return login.getId().equals(id);
+    }
+
+    public boolean isAdmin(Member login) {
+        if (login.getAuth() != null) {
+            return login.getAuth()
+                    .stream()
+                    .map(e -> e.getManager())
+                    .anyMatch(n -> n.equals("admin"));
+        }
+        return false;
     }
 }

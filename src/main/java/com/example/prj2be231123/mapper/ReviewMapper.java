@@ -15,16 +15,16 @@ public interface ReviewMapper {
     int insert(Review review);
 
     @Select("""
-            SELECT no, title, writer, inserted
-            FROM review
-            ORDER BY no DESC
+            SELECT r.no, r.title, m.nickName, r.writer, r.inserted
+            FROM review r JOIN member m ON r.writer = m.id
+            ORDER BY r.no DESC
             """)
     List<Review> selectAll();
 
     @Select("""
-            SELECT no, title, recommend, content, writer, inserted
-            FROM review
-            WHERE no = #{no}
+            SELECT r.no, r.title, r.recommend, r.content, r.writer, m.nickName, r.inserted
+            FROM review r JOIN member m ON r.writer = m.id
+            WHERE r.no = #{no}
             """)
     Review selectById(Integer no);
 
@@ -42,6 +42,12 @@ public interface ReviewMapper {
             WHERE no = #{no}
             """)
     int update(Review review);
+
+    @Delete("""
+            DELETE FROM review
+            WHERE writer = #{writer}
+            """)
+    int deleteByWriter(String id);
 
 
     @Select("""
