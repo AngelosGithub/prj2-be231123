@@ -42,4 +42,20 @@ public interface ReviewMapper {
             WHERE no = #{no}
             """)
     int update(Review review);
+
+
+    @Select("""
+             SELECT  rv.no,
+              rv.title, 
+              rv.recommend, 
+              rv.content,
+               rv.writer, 
+               rv.inserted,
+               st.point starPoint
+             FROM review rv left join starpoint st
+                     on rv.no = st.reviewId
+             WHERE restaurantId = #{restaurantId}
+             LIMIT 3;
+            """)
+    List<Review> selectByRestaurant(Integer restaurantId);
 }

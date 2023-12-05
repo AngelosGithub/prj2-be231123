@@ -29,7 +29,6 @@ public class CategoryService {
     public Map<String, Object> getCategoryList() {
         Map<String, Object> map = new HashMap<>();
 
-
         map.put("restaurantTypes", categoryMapper.getTypes());
         map.put("restaurantPurpose", categoryMapper.getPurpose());
 
@@ -42,12 +41,9 @@ public class CategoryService {
             return false;
         }
 
-
         if (categoryMapper.selectTypeName(restaurantType.getName()) != null){
             return false;
         }
-
-
 
         return true;
     }
@@ -60,7 +56,6 @@ public class CategoryService {
     }
 
     public boolean restaurantPurposeValidate(RestaurantPurpose restaurantPurpose) {
-
         if (restaurantPurpose.getName()==null ||restaurantPurpose.getName().isBlank()) {
             return false;
         }
@@ -98,9 +93,7 @@ public class CategoryService {
     }
 
     public boolean typeRemove(Integer no) {
-        // 카테고리 등록된 맛집 게시판 전부 삭제 후 본인 카테고리 삭제
 
-        // 카테고리에 등록된 게시물 조회
         List<Integer> categoryTypeList = restaurantMapper.selectListByCategoryNo(no);
 
         categoryTypeList.forEach((typeNo)-> restaurantService.remove(typeNo));
