@@ -48,4 +48,20 @@ public interface ReviewMapper {
             WHERE writer = #{writer}
             """)
     int deleteByWriter(String id);
+
+
+    @Select("""
+             SELECT  rv.no,
+              rv.title, 
+              rv.recommend, 
+              rv.content,
+               rv.writer, 
+               rv.inserted,
+               st.point starPoint
+             FROM review rv left join starpoint st
+                     on rv.no = st.reviewId
+             WHERE restaurantId = #{restaurantId}
+             LIMIT 3;
+            """)
+    List<Review> selectByRestaurant(Integer restaurantId);
 }

@@ -29,7 +29,6 @@ public class CategoryController {
             @RequestBody RestaurantType restaurantType
             ){
 
-
         if(!service.restaurantTypeValidate(restaurantType)){
             return ResponseEntity.badRequest().build();
         }
@@ -61,8 +60,6 @@ public class CategoryController {
     public RestaurantType getTypes(
             @PathVariable Integer no
     ){
-
-
         return service.getTypes(no);
     }
 
@@ -73,7 +70,6 @@ public class CategoryController {
         if (!service.restaurantTypeValidate(restaurantType)){
           return   ResponseEntity.badRequest().build();
         }
-
 
         if (service.typesUpdate(restaurantType)){
           return   ResponseEntity.ok().build();

@@ -3,6 +3,7 @@ package com.example.prj2be231123.service;
 import com.example.prj2be231123.domain.Restaurant;
 import com.example.prj2be231123.domain.RestaurantFile;
 import com.example.prj2be231123.domain.RestaurantPurpose;
+import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.mapper.*;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class RestaurantService {
 
     private final RestaurantFileMapper fileMapper;
 
+    private final  ReviewMapper reviewMapper;
+
 
     @Value("${aws.bucketName}")
     private String bucket;
@@ -50,14 +53,10 @@ public class RestaurantService {
             Restaurant restaurant, String restaurantTypeName, List<String> restaurantPurpose, MultipartFile[] files
     ) throws IOException {
 
-        //음식 요소
         int typeNo = categoryMapper.getTypeNo(restaurantTypeName);
         restaurant.setRestaurantType(typeNo);
 
         int cnt = mapper.save(restaurant);
-
-
-        //RestaurantPurposeJoin 테이블에 정보저장
 
         if (restaurantPurpose != null) {
             for (int i = 0; i < restaurantPurpose.size(); i++) {
@@ -68,8 +67,6 @@ public class RestaurantService {
             }
         }
 
-
-        //레스토랑file 테이블에 files 정보 저장
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 fileMapper.insert(restaurant.getNo(), files[i].getOriginalFilename());
@@ -77,14 +74,11 @@ public class RestaurantService {
             }
         }
 
-
         return cnt == 1;
     }
 
 
     private void upload(Integer restaurantNo, MultipartFile file) throws IOException {
-        // 파일 저장 경로
-        // c:\Temp\prj2\게시물번호\파일명
         String key = "prj2/restaurant/" + restaurantNo + "/" + file.getOriginalFilename();
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
@@ -99,19 +93,14 @@ public class RestaurantService {
     }
 
 
-    public Restaurant get(Integer no) {
+    public HashMap<String, Object> get(Integer no) {
+
+        HashMap<String, Object> map = new HashMap<>();
+
         Restaurant restaurant = mapper.getId(no);
 
-        // 음식 목적 가기고 오기
-        /*
-         *  게시물
-         *
-         * */
-        // 해당 게시물에 대한 음식 목적 아이디 가지고 오기
         List<Integer> purposeById = purposeJoinMapper.getPurposeById(no);
 
-
-        //
         List<RestaurantPurpose> restaurantPurposes = new ArrayList<>();
         for (Integer purposeId : purposeById) {
             restaurantPurposes.add(purposeMapper.getByName(purposeId));
@@ -120,8 +109,6 @@ public class RestaurantService {
 
         restaurant.setPurpose(restaurantPurposes);
 
-
-        // 파일 이미지 가지고 오기
         List<RestaurantFile> files = fileMapper.selectNamesById(no);
 
         for (RestaurantFile restaurantFile : files) {
@@ -131,45 +118,42 @@ public class RestaurantService {
         }
 
         restaurant.setFiles(files);
+        // TODO : 해당 맛집에 달린 리스트 출력
+        // TODO : 1. 맛집 게시물 번호로 리뷰 조회 테이블 검색
+        // TODO : 2. 해쉬 맵에 저장 레스토랑 정보 + 리뷰 정보
+        // TODO : 3. 리뷰 별점 ?
+        // TODO : 4.
 
+        List<Review> reivews = new ArrayList<>();
+       reivews.addAll(reviewMapper.selectByRestaurant(no));
 
-        return restaurant;
+        map.put("restaurant",restaurant);
+        map.put("reviews",reivews);
+        return map;
     }
 
     public HashMap<String, Object> selectAll(
             Integer page, String keyword,
             String category, List<String> checkBoxIds, Integer typeno) {
 
-        System.out.println("page = " + page);
-
-        System.out.println("checkBoxIds = " + checkBoxIds);
-        System.out.println("typeno = " + typeno);
-
-
-
         HashMap<String, Object> map = new HashMap<>();
 
         HashMap<String, Object> pageInfo = new HashMap<>();
 
         List<Restaurant> restaurantList = new ArrayList<>();
-        //페이징 처리
-        int countAll = 0; //총게시판수
+
+        int countAll = 0;
         int from = (page - 1) * 6;
 
 
        if(checkBoxIds.size()==0){
+
          countAll =  mapper.countAll(typeno,"%" + keyword + "%", category);
            restaurantList = mapper.selectAll(from,typeno,"%" + keyword + "%", category);
 
        }
 
        if (checkBoxIds.size() !=0){
-           // 테마 요소 누르는 경우 checkBoxIds 사이즈가 0이 아닌경우
-           // 1. 테마 요소 이름으로 no 조회후
-           // 2. 레스토랑 다대다 관계 테이블인 join테이블에서 레스토랑 no 가지고 오기
-           // 3. 조회한 no 중복 테이블 제거 작업 처리
-           // 4. 조회한 레스토랑 no로 레스토랑 데이터 조회후 view에 출력
-           // 5. view에 출력시 페이징 처리 및 1페이지 당 6개씩 출력
            List<Integer> purposeNo = new ArrayList<>();
            for (String name : checkBoxIds) {
                purposeNo.add(purposeMapper.getByNo(name));
@@ -181,7 +165,6 @@ public class RestaurantService {
                restaurantNo.addAll(purposeJoinMapper.selectByRestaurantsNo(no));
            }
 
-           // 리스트 중복 제거 코드
            List<Integer> newRestaurantNo = restaurantNo
                    .stream()
                    .distinct()
@@ -202,7 +185,6 @@ public class RestaurantService {
                    restaurantList.addAll(mapper.getIdSelectAll(no));
               }
             }
-
 
            countAll =newRestaurantNo.size();
 
@@ -251,13 +233,8 @@ public class RestaurantService {
 
 
     public boolean remove(Integer no) {
-
-        // 레스토랑 조인 테이블 기록 삭제
         purposeJoinMapper.deleteByRestaurantNo(no);
-        // 레스토랑 폼에 작성된 리뷰 테이블 삭제
 
-        //레스토랑 aws3 버켓 지우기
-        //3.
         deleteFile(no);
 
         return mapper.deleteByNo(no) == 1;
@@ -265,10 +242,9 @@ public class RestaurantService {
 
 
     private void deleteFile(Integer no) {
-        //파일명 조회
+
         List<RestaurantFile> restaurantFiles = fileMapper.selectNamesById(no);
 
-        //  aws3 버켓 지우기
         for (RestaurantFile file : restaurantFiles) {
             String key = "prj2/restaurant/" + no + "/" + file.getFileName();
 
@@ -281,7 +257,6 @@ public class RestaurantService {
             s3.deleteObject(ObjectRequest);
         }
 
-        // 4. 게시물에 달린 이미지 삭제
         fileMapper.deleteByFileRestaurantdNo(no);
 
     }
@@ -291,14 +266,9 @@ public class RestaurantService {
             Restaurant restaurant, String restaurantTypeName,
             List<String> restaurantPurpose, List<Integer> removeFileIds,
             MultipartFile[] uploadFiles) throws IOException {
-        // 카테고리 및 테 마 변경
-        System.out.println("removeFile = " + removeFileIds);
-        //음식 요소
+
         int typeNo = categoryMapper.getTypeNo(restaurantTypeName);
         restaurant.setRestaurantType(typeNo);
-
-
-        //RestaurantPurposeJoin 테이블에 정보저장
 
         if (restaurantPurpose != null) {
             purposeJoinMapper.deleteByRestaurantNo(restaurant.getNo());
@@ -311,7 +281,6 @@ public class RestaurantService {
         }
 
 
-        //파일 지우기
         if (removeFileIds != null) {
             for (Integer no : removeFileIds) {
                 RestaurantFile file = fileMapper.selectByNo(no);
@@ -328,8 +297,6 @@ public class RestaurantService {
             }
         }
 
-
-        //파일 추가 하기
         if (uploadFiles != null) {
             for (MultipartFile files : uploadFiles) {
 
@@ -339,9 +306,7 @@ public class RestaurantService {
             }
         }
 
-
         return mapper.update(restaurant) == 1;
-
 
     }
 
