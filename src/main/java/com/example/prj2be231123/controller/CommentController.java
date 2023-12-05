@@ -47,7 +47,22 @@ public class CommentController {
     }
 
     @DeleteMapping("{no}")
-    public void remove(@PathVariable Integer no) {
-        service.remove(no);
+    public ResponseEntity remove(@PathVariable Integer no,
+                                         @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+        if (service.hasAccess(no, login)) {
+            if (service.remove(no)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
     }
 }

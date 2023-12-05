@@ -29,4 +29,10 @@ public interface CommentMapper {
             WHERE no = #{no}
             """)
     int deleteById(Integer no);
+
+    @Select("""
+            SELECT * FROM comment
+            WHERE no = #{no}
+            """)
+    Comment selectById(Integer no);
 }

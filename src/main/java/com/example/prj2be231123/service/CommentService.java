@@ -42,7 +42,13 @@ public class CommentService {
         return mapper.selectByReviewId(reviewId);
     }
 
-    public void remove(Integer no) {
-        mapper.deleteById(no);
+    public boolean remove(Integer no) {
+        return mapper.deleteById(no) == 1;
+    }
+
+    public boolean hasAccess(Integer no, Member login) {
+        Comment comment = mapper.selectById(no);
+
+        return comment.getMemberId().equals(login.getId());
     }
 }
