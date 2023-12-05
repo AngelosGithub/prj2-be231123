@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")
@@ -37,5 +39,10 @@ public class CommentController {
             // 요청이 잘못됨
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("list")
+    public List<Comment> list(@RequestParam("id") Integer reviewId) {
+        return service.list(reviewId);
     }
 }
