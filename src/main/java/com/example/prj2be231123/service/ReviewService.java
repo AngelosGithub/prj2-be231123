@@ -36,13 +36,26 @@ public class ReviewService {
         // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
         int lastPage = (allPages -1) / 9 + 1;
         // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
-        int startPageNum = (page -1) / 9 * 9 + 1;
+
+        int startPageNum = (page -1) / 10 * 10 + 1;
         int endPageNum = startPageNum + 10;
         endPageNum = Math.min(endPageNum, lastPage);
         // 페이지의 시작과 끝을 넣을 변수
 
+        int prevPage = startPageNum - 10;
+        int nextPage = endPageNum + 1;
+        // 페이지 이동 버튼 만들때 필요한 계산식
+
         pageInfo.put("startPageNum", startPageNum);
         pageInfo.put("endPageNum", endPageNum);
+        if (prevPage > 0) {
+            // 이전 버튼
+            pageInfo.put("prevPage", prevPage);
+        }
+        if (nextPage < lastPage) {
+            // 다음 버튼
+            pageInfo.put("nextPage", nextPage);
+        }
 
         map.put("reviewList", mapper.selectAll(from));
         map.put("pageInfo", pageInfo);
