@@ -21,8 +21,10 @@ public class ReviewService {
         return mapper.insert(review) == 1;
     }
 
-    public List<Review> list() {
-        return mapper.selectAll();
+    public List<Review> list(Integer page) {
+        int from = (page - 1) * 9;
+
+        return mapper.selectAll(from);
     }
 
     public Review get(Integer no) {

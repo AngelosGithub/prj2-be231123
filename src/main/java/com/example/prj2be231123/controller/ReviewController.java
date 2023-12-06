@@ -37,9 +37,10 @@ public class ReviewController {
         }
     }
 
+    // /api/review/list?p=1
     @GetMapping("list")
-    public List<Review> list() {
-        return service.list();
+    public List<Review> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+        return service.list(page);
     }
 
     @GetMapping("no/{no}")

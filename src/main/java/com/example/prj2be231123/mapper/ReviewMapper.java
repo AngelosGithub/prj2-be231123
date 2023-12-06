@@ -24,9 +24,10 @@ public interface ReviewMapper {
             FROM review r JOIN member m ON r.writer = m.id
                           LEFT JOIN comment c ON r.no = c.reviewId
             GROUP BY r.no
-            ORDER BY r.no DESC;
+            ORDER BY r.no DESC
+            LIMIT #{from}, 9;
             """)
-    List<Review> selectAll();
+    List<Review> selectAll(Integer from);
 
     @Select("""
             SELECT r.no,
