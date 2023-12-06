@@ -2,6 +2,7 @@ package com.example.prj2be231123.service;
 
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
+import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ReviewService {
     private final ReviewMapper mapper;
     private final MemberService memberService;
+    private final CommentMapper commentMapper;
 
     public boolean save(Review review, Member login) {
         review.setWriter(login.getId());
@@ -29,6 +31,9 @@ public class ReviewService {
     }
 
     public boolean remove(Integer no) {
+        // 1. 게시물에 있는 댓글 지우기
+        commentMapper.deleteByReviewId(no);
+
         return mapper.deleteById(no) == 1;
     }
 

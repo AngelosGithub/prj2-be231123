@@ -45,4 +45,10 @@ public interface CommentMapper {
             WHERE no = #{no}
             """)
     int update(Comment comment);
+
+    @Delete("""
+            DELETE FROM comment
+            WHERE reviewId = #{reviewId}
+            """)
+    int deleteByReviewId(Integer no);
 }
