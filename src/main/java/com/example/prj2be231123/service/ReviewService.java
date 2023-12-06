@@ -37,12 +37,12 @@ public class ReviewService {
         int lastPage = (allPages -1) / 9 + 1;
         // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
         int startPageNum = (page -1) / 9 * 9 + 1;
-        int endPageNum = startPageNum + 8;
+        int endPageNum = startPageNum + 10;
         endPageNum = Math.min(endPageNum, lastPage);
         // 페이지의 시작과 끝을 넣을 변수
 
         pageInfo.put("startPageNum", startPageNum);
-        pageInfo.put("lastPage", lastPage);
+        pageInfo.put("endPageNum", endPageNum);
 
         map.put("reviewList", mapper.selectAll(from));
         map.put("pageInfo", pageInfo);
