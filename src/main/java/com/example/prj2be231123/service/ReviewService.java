@@ -43,8 +43,11 @@ public class ReviewService {
         // 페이지의 시작과 끝을 넣을 변수
 
         int prevPage = startPageNum - 10;
-        int nextPage = endPageNum + 1;
+        int nextPage = endPageNum;
         // 페이지 이동 버튼 만들때 필요한 계산식
+
+        pageInfo.put("currentPage", page);
+        // 현재 페이지 번호
 
         pageInfo.put("startPageNum", startPageNum);
         pageInfo.put("endPageNum", endPageNum);
