@@ -66,12 +66,12 @@ public interface ReviewMapper {
 
     @Select("""
              SELECT  rv.no,
-              rv.title,
-              rv.recommend,
-              rv.content,
-               rv.writer,
-               rv.inserted,
-               st.point starPoint
+                     rv.title,
+                     rv.recommend,
+                     rv.content,
+                     rv.writer,
+                     rv.inserted,
+                     st.point starPoint
              FROM review rv left join starpoint st
                      on rv.no = st.reviewId
              WHERE restaurantId = #{restaurantId}
@@ -85,4 +85,9 @@ public interface ReviewMapper {
             WHERE writer = #{id}
             """)
     List<Integer> selectIdListByMemberId(String writer);
+
+    @Select("""
+            SELECT COUNT(*) FROM review;
+            """)
+    int allPages();
 }

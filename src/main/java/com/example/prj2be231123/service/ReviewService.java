@@ -7,7 +7,10 @@ import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +24,30 @@ public class ReviewService {
         return mapper.insert(review) == 1;
     }
 
-    public List<Review> list(Integer page) {
+    public Map<String, Object> list(Integer page) {
+        // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> pageInfo = new HashMap<>();
+
         int from = (page - 1) * 9;
         // 페이지 나누기 위한 코드
 
-        return mapper.selectAll(from);
+        int allPages = mapper.allPages();
+        // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
+        int lastPage = (allPages -1) / 9 + 1;
+        // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
+        int startPageNum = (page -1) / 9 * 9 + 1;
+        int endPageNum = startPageNum + 8;
+        endPageNum = Math.min(endPageNum, lastPage);
+        // 페이지의 시작과 끝을 넣을 변수
+
+        pageInfo.put("startPageNum", startPageNum);
+        pageInfo.put("lastPage", lastPage);
+
+        map.put("reviewList", mapper.selectAll(from));
+        map.put("pageInfo", pageInfo);
+
+        return map;
     }
 
     public Review get(Integer no) {

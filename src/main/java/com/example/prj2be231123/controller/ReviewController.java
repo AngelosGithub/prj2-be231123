@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +41,9 @@ public class ReviewController {
 
     // /api/review/list?p=1
     @GetMapping("list")
-    public List<Review> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
         // 페이지를 나누기 위한 프로퍼티 입력
+        // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
         return service.list(page);
     }
 
