@@ -13,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewMapper mapper;
-    private final MemberService memberService;
     private final CommentMapper commentMapper;
 
     public boolean save(Review review, Member login) {
@@ -61,7 +60,11 @@ public class ReviewService {
     }
 
     public boolean hasAccess(Integer no, Member login) {
-        if (memberService.isAdmin(login)) {
+        if (login == null) {
+            return false;
+        }
+
+        if (login.isAdmin()) {
             return true;
         }
 

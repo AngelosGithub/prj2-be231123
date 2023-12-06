@@ -51,4 +51,10 @@ public interface CommentMapper {
             WHERE reviewId = #{reviewId}
             """)
     int deleteByReviewId(Integer no);
+
+    @Delete("""
+            DELETE FROM comment
+            WHERE memberId = #{memberId}
+            """)
+    int deleteByMemberId(String memberId);
 }

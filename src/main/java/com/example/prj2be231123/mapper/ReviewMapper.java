@@ -65,10 +65,10 @@ public interface ReviewMapper {
 
     @Select("""
              SELECT  rv.no,
-              rv.title, 
-              rv.recommend, 
+              rv.title,
+              rv.recommend,
               rv.content,
-               rv.writer, 
+               rv.writer,
                rv.inserted,
                st.point starPoint
              FROM review rv left join starpoint st
@@ -77,4 +77,11 @@ public interface ReviewMapper {
              LIMIT 3;
             """)
     List<Review> selectByRestaurant(Integer restaurantId);
+
+    @Select("""
+            SELECT no
+            FROM review
+            WHERE writer = #{id}
+            """)
+    List<Integer> selectIdListByMemberId(String writer);
 }
