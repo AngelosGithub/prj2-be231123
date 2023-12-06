@@ -15,5 +15,6 @@ public class Review {
     private String nickName;
     private Integer restaurantId;
     private LocalDateTime inserted;
-    private int starPoint;
+    private Integer countComment;
+    private Integer starPoint;
 }

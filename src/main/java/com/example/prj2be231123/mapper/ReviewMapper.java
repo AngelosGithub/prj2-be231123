@@ -15,14 +15,27 @@ public interface ReviewMapper {
     int insert(Review review);
 
     @Select("""
-            SELECT r.no, r.title, m.nickName, r.writer, r.inserted
+            SELECT r.no,
+                   r.title,
+                   m.nickName,
+                   r.writer,
+                   r.inserted,
+                   COUNT(c.no) countComment
             FROM review r JOIN member m ON r.writer = m.id
-            ORDER BY r.no DESC
+                          LEFT JOIN comment c ON r.no = c.reviewId
+            GROUP BY r.no
+            ORDER BY r.no DESC;
             """)
     List<Review> selectAll();
 
     @Select("""
-            SELECT r.no, r.title, r.recommend, r.content, r.writer, m.nickName, r.inserted
+            SELECT r.no,
+                   r.title,
+                   r.recommend,
+                   r.content,
+                   r.writer,
+                   m.nickName,
+                   r.inserted
             FROM review r JOIN member m ON r.writer = m.id
             WHERE r.no = #{no}
             """)
