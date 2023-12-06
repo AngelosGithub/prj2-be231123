@@ -40,6 +40,7 @@ public class ReviewController {
     // /api/review/list?p=1
     @GetMapping("list")
     public List<Review> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+        // 페이지를 나누기 위한 프로퍼티 입력
         return service.list(page);
     }
 

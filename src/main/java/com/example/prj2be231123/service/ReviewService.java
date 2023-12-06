@@ -23,6 +23,7 @@ public class ReviewService {
 
     public List<Review> list(Integer page) {
         int from = (page - 1) * 9;
+        // 페이지 나누기 위한 코드
 
         return mapper.selectAll(from);
     }
