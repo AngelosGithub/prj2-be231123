@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //  Transactional 전체 코드가 실행되어야 함
@@ -32,6 +33,8 @@ public class ReviewService {
     private final S3Client s3;
 
     // import 를 잘 확인할 것
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
     @Value("${aws.bucketName}")
     private String bucket;
 
@@ -116,7 +119,16 @@ public class ReviewService {
     }
 
     public Review get(Integer no) {
-        return mapper.selectById(no);
+        Review review = mapper.selectById(no);
+
+        List<String> fileNames = fileMapper.selectFilesByReviewId(no);
+
+        fileNames = fileNames.stream()
+                .map(name -> urlPrefix + "prj2/review/" + no + "/" + name)
+                .toList();
+
+        review.setFileNames(fileNames);
+        return review;
     }
 
     public boolean remove(Integer no) {
