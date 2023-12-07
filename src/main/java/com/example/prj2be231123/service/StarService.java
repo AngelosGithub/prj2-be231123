@@ -4,9 +4,11 @@ import com.example.prj2be231123.domain.Star;
 import com.example.prj2be231123.mapper.StarMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class StarService {
 //    private final StarMapper mapper;
 

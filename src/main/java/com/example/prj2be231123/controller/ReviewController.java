@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +24,7 @@ public class ReviewController {
     @PostMapping("add")
     public ResponseEntity add(Review review,
                               @RequestParam(value = "files[]", required = false) MultipartFile[] files,
-                              @SessionAttribute(value = "login", required = false) Member login) {
+                              @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 //        파일 요청을 받는지 확인
 //        if (files != null) {
 //            for (int i = 0; i < files.length; i++) {

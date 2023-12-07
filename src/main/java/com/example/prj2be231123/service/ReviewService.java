@@ -4,16 +4,19 @@ import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
-import com.example.prj2be231123.mapper.RestaurantFileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+//  Transactional 전체 코드가 실행되어야 함
+@Transactional(rollbackFor = Exception.class)
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -21,7 +24,7 @@ public class ReviewService {
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
 
-    public boolean save(Review review, Member login, MultipartFile[] files) {
+    public boolean save(Review review, Member login, MultipartFile[] files) throws IOException {
         // 로그인 한 사용자의 아이디를 가져옴
         review.setWriter(login.getId());
 
@@ -41,10 +44,10 @@ public class ReviewService {
         return cnt == 1;
     }
 
-    private void upload(MultipartFile file, Integer reviewId) {
+    private void upload(MultipartFile file, Integer reviewId) throws IOException {
         // 파일 저장경로
         // C:\Temp\prj2\게시물번호\파일명
-        try {
+
             // 글 번호에 해당하는 폴더를 만듬
             File folder = new File("C:\\Temp\\prj2\\" + reviewId);
             if (!folder.exists()) {
@@ -56,10 +59,6 @@ public class ReviewService {
 
             File des = new File(path);
             file.transferTo(des);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public Map<String, Object> list(Integer page, String keyword) {

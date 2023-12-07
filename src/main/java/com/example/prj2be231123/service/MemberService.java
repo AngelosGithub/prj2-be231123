@@ -7,6 +7,7 @@ import com.example.prj2be231123.mapper.MemberMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class MemberService {
     private final MemberMapper mapper;
     private final ReviewMapper reviewMapper;
