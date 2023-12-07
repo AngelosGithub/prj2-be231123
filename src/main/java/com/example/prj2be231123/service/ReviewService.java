@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +32,34 @@ public class ReviewService {
             for (int i = 0; i < files.length; i++) {
                 // reviewId, name
                 fileMapper.insert(review.getNo(), files[i].getOriginalFilename());
+
+                // 실제 파일은 S3 버켓에 업로드
+                // 우선 로컬에 저장
+                upload(files[i], review.getNo());
             }
         }
-
-        // 실제 파일은 S3 버켓에 업로드
-
         return cnt == 1;
+    }
+
+    private void upload(MultipartFile file, Integer reviewId) {
+        // 파일 저장경로
+        // C:\Temp\prj2\게시물번호\파일명
+        try {
+            // 글 번호에 해당하는 폴더를 만듬
+            File folder = new File("C:\\Temp\\prj2\\" + reviewId);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+
+            // 만든 폴더에 첨부한 파일과 같은 이름으로 파일 생성
+            String path = folder.getAbsolutePath() + "\\" +file.getOriginalFilename();
+
+            File des = new File(path);
+            file.transferTo(des);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Map<String, Object> list(Integer page, String keyword) {
