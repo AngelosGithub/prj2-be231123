@@ -1,5 +1,6 @@
 package com.example.prj2be231123.mapper;
 
+import com.example.prj2be231123.domain.ReviewFile;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -16,9 +17,9 @@ public interface FileMapper {
     int insert(Integer reviewId, String fileName);
 
     @Select("""
-            SELECT fileName
+            SELECT no, fileName
             FROM reviewfile
             WHERE reviewId = #{reviewId}
             """)
-    List<String> selectFilesByReviewId(Integer reviewId);
+    List<ReviewFile> selectFilesByReviewId(Integer reviewId);
 }

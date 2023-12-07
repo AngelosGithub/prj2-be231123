@@ -2,12 +2,8 @@ package com.example.prj2be231123.domain;
 
 import com.example.prj2be231123.util.AppUtil;
 import lombok.Data;
-import org.apache.ibatis.annotations.Insert;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Data
@@ -23,7 +19,7 @@ public class Review {
     private Integer countComment;
     private Integer starPoint;
 
-    private List<String> fileNames;
+    private List<ReviewFile> files;
 
     public String getAgo() {
         return AppUtil.getAgo(inserted, LocalDateTime.now());

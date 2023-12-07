@@ -2,6 +2,7 @@ package com.example.prj2be231123.service;
 
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
+import com.example.prj2be231123.domain.ReviewFile;
 import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
@@ -15,7 +16,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -121,13 +121,15 @@ public class ReviewService {
     public Review get(Integer no) {
         Review review = mapper.selectById(no);
 
-        List<String> fileNames = fileMapper.selectFilesByReviewId(no);
+        List<ReviewFile> reviewFiles = fileMapper.selectFilesByReviewId(no);
 
-        fileNames = fileNames.stream()
-                .map(name -> urlPrefix + "prj2/review/" + no + "/" + name)
-                .toList();
+        for (ReviewFile reviewFile : reviewFiles) {
+            String url = urlPrefix + "prj2/review/" + no + "/" + reviewFile.getFileName();
+            reviewFile.setUrl(url);
+        }
 
-        review.setFileNames(fileNames);
+        review.setFiles(reviewFiles);
+
         return review;
     }
 
