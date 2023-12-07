@@ -6,9 +6,14 @@ import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +28,12 @@ public class ReviewService {
     private final ReviewMapper mapper;
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
+
+    private final S3Client s3;
+
+    // import 를 잘 확인할 것
+    @Value("${aws.bucketName}")
+    private String bucket;
 
     public boolean save(Review review, Member login, MultipartFile[] files) throws IOException {
         // 로그인 한 사용자의 아이디를 가져옴
@@ -45,20 +56,20 @@ public class ReviewService {
     }
 
     private void upload(MultipartFile file, Integer reviewId) throws IOException {
-        // 파일 저장경로
-        // C:\Temp\prj2\게시물번호\파일명
+        // 기존 로컬에 저장시켰던 코드는 제거함
 
-            // 글 번호에 해당하는 폴더를 만듬
-            File folder = new File("C:\\Temp\\prj2\\" + reviewId);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
+        // aws 서버에 파일 올리기
+        String key = "prj2/review" + reviewId + "/" + file.getOriginalFilename();
+        // 파일 경로 정해주는 key
 
-            // 만든 폴더에 첨부한 파일과 같은 이름으로 파일 생성
-            String path = folder.getAbsolutePath() + "\\" +file.getOriginalFilename();
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
 
-            File des = new File(path);
-            file.transferTo(des);
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        // s3 bucket에 파일 업로드 하는 코드
     }
 
     public Map<String, Object> list(Integer page, String keyword) {
