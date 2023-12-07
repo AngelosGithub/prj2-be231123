@@ -22,8 +22,15 @@ public class ReviewController {
 
     @PostMapping("add")
     public ResponseEntity add(Review review,
-                              @RequestParam(value = "file", required = false) MultipartFile file,
+                              @RequestParam(value = "files[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) {
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                System.out.println("file = " + files[i].getOriginalFilename());
+                System.out.println("file = " + files[i].getSize());
+            }
+        }
+
         System.out.println("login = " + login);
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
