@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,8 @@ public class ReviewController {
     private final ReviewService service;
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody Review review,
+    public ResponseEntity add(Review review,
+                              @RequestParam(value = "file", required = false) MultipartFile file,
                               @SessionAttribute(value = "login", required = false) Member login) {
         System.out.println("login = " + login);
         if (login == null) {
