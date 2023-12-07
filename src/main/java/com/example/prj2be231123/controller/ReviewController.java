@@ -23,7 +23,7 @@ public class ReviewController {
 
     @PostMapping("add")
     public ResponseEntity add(Review review,
-                              @RequestParam(value = "files[]", required = false) MultipartFile[] files,
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 //        파일 요청을 받는지 확인
 //        if (files != null) {
