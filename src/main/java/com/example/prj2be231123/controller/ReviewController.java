@@ -40,11 +40,13 @@ public class ReviewController {
     }
 
     // /api/review/list?p=1
+    // /api/review/list?k=words
     @GetMapping("list")
-    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
+                                    @RequestParam(value = "k", defaultValue = "") String keyword) {
         // 페이지를 나누기 위한 프로퍼티 입력
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
-        return service.list(page);
+        return service.list(page, keyword);
     }
 
     @GetMapping("no/{no}")

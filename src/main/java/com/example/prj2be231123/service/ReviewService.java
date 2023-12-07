@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +22,7 @@ public class ReviewService {
         return mapper.insert(review) == 1;
     }
 
-    public Map<String, Object> list(Integer page) {
+    public Map<String, Object> list(Integer page, String keyword) {
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> pageInfo = new HashMap<>();
@@ -60,7 +58,8 @@ public class ReviewService {
             pageInfo.put("nextPage", nextPage);
         }
 
-        map.put("reviewList", mapper.selectAll(from));
+        map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
+        // 검색기능을 위해 keyword 파라미터 추가
         map.put("pageInfo", pageInfo);
 
         return map;
