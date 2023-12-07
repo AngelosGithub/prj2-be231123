@@ -59,7 +59,7 @@ public class ReviewService {
         // 기존 로컬에 저장시켰던 코드는 제거함
 
         // aws 서버에 파일 올리기
-        String key = "prj2/review" + reviewId + "/" + file.getOriginalFilename();
+        String key = "prj2/review/" + reviewId + "/" + file.getOriginalFilename();
         // 파일 경로 정해주는 key
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
