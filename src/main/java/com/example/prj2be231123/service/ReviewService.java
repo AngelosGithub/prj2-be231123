@@ -3,9 +3,12 @@ package com.example.prj2be231123.service;
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.mapper.CommentMapper;
+import com.example.prj2be231123.mapper.FileMapper;
+import com.example.prj2be231123.mapper.RestaurantFileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +18,25 @@ import java.util.Map;
 public class ReviewService {
     private final ReviewMapper mapper;
     private final CommentMapper commentMapper;
+    private final FileMapper fileMapper;
 
-    public boolean save(Review review, Member login) {
+    public boolean save(Review review, Member login, MultipartFile[] files) {
+        // 로그인 한 사용자의 아이디를 가져옴
         review.setWriter(login.getId());
 
-        return mapper.insert(review) == 1;
+        int cnt = mapper.insert(review);
+
+        // reviewFile 테이블에 files 정보 저장(파일의 이름만)
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                // reviewId, name
+                fileMapper.insert(review.getNo(), files[i].getOriginalFilename());
+            }
+        }
+
+        // 실제 파일은 S3 버켓에 업로드
+
+        return cnt == 1;
     }
 
     public Map<String, Object> list(Integer page, String keyword) {

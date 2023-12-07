@@ -12,6 +12,7 @@ public interface ReviewMapper {
             INSERT INTO review (title, recommend, content, writer, restaurantId)
             VALUES (#{title}, #{recommend}, #{content}, #{writer}, #{restaurantId})
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "no")
     int insert(Review review);
 
     @Select("""

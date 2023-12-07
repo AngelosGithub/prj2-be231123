@@ -24,12 +24,13 @@ public class ReviewController {
     public ResponseEntity add(Review review,
                               @RequestParam(value = "files[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) {
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                System.out.println("file = " + files[i].getOriginalFilename());
-                System.out.println("file = " + files[i].getSize());
-            }
-        }
+//        파일 요청을 받는지 확인
+//        if (files != null) {
+//            for (int i = 0; i < files.length; i++) {
+//                System.out.println("file = " + files[i].getOriginalFilename());
+//                System.out.println("file = " + files[i].getSize());
+//            }
+//        }
 
         System.out.println("login = " + login);
         if (login == null) {
@@ -41,7 +42,7 @@ public class ReviewController {
 //            return ResponseEntity.badRequest().build();
 //        }
 
-        if (service.save(review, login)) {
+        if (service.save(review, login, files)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
