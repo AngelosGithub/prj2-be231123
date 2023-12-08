@@ -38,7 +38,7 @@ public class RestaurantController {
             @RequestParam(value = "checkBoxIds[]" , required = false)List<String> restaurantPurpose,
             @RequestParam(value = "uploadFiles[]" ,required = false)MultipartFile[] files,
             @SessionAttribute(value = "login",required = false)Member login
-            )throws IOException  {
+    )throws IOException  {
 
         if(login==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
@@ -67,13 +67,19 @@ public class RestaurantController {
             ,@RequestParam(value= "k",defaultValue = "") String keyword,
             @RequestParam(value = "c",defaultValue = "all") String category,
             @RequestParam(value = "purpose",defaultValue = "")List<String>  checkBoxIds
-            ,@RequestParam(value ="typeno",defaultValue = "0")Integer typeno
+            ,@RequestParam(value ="typeNo",defaultValue = "0")Integer typeno
     ){
-
 
 
         return service.selectAll(page,keyword,category,checkBoxIds,typeno);
     }
+
+
+    @GetMapping("typeList")
+    public HashMap<String,Object>typeList(){
+        return service.selectTypeList();
+    }
+
 
 
     @GetMapping("no/{no}")
@@ -83,6 +89,10 @@ public class RestaurantController {
 
         return service.get(no);
     }
+
+
+
+
 
 
     @DeleteMapping("remove/{no}")

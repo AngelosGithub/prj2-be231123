@@ -40,6 +40,7 @@ public interface RestaurantFileMapper {
                 SELECT *
                 FROM restaurantfile
                 WHERE restaurantNo = #{restaurantNo}
+                LIMIT 1
             """)
     List<RestaurantFile> selectAllNamesById(int restaurantNo);
 
@@ -55,4 +56,14 @@ public interface RestaurantFileMapper {
                 WHERE no = #{no}
             """)
     int deleteById(Integer no);
+
+
+
+    @Select("""
+               SELECT *
+                FROM restaurantfile
+                WHERE restaurantNo = #{restaurantNo}
+                LIMIT 1
+            """)
+    List<RestaurantFile> selectNameById(int restaurantNo);
 }

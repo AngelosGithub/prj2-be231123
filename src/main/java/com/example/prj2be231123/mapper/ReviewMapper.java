@@ -88,7 +88,7 @@ public interface ReviewMapper {
                 FROM review
                 WHERE restaurantId = #{restaurantId}
             """)
-    List<Integer> selectListByRestaurantNo(Integer no);
+    List<Integer> selectListByRestaurantN(Integer no);
 
     @Select("""
             SELECT no
@@ -101,4 +101,12 @@ public interface ReviewMapper {
             SELECT COUNT(*) FROM review;
             """)
     int allPages();
+
+
+    @Select("""
+                SELECT no
+                FROM review
+                WHERE restaurantId = #{restaurantId}
+            """)
+    List<Integer> selectListByRestaurantNo(Integer no);
 }

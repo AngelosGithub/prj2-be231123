@@ -50,7 +50,7 @@ public interface CategoryMapper {
             """)
     int typesAdd(RestaurantType name);
 
- @Insert("""
+    @Insert("""
                 INSERT INTO  restaurantpurpose(name)
                 VALUES ( #{name})
          """)
@@ -114,4 +114,23 @@ public interface CategoryMapper {
                 WHERE no= #{no}
             """)
     int purposeRemove(Integer no);
+
+    @Select("""
+                SELECT name
+                FROM restauranttypes           
+            """)
+    List<String> getTypesName();
+
+
+
+
+
+    @Select("""
+    SELECT rs.no,rs.name,count(rs.name) AS count
+    FROM restaurant rt LEFT JOIN restauranttypes rs
+        ON  rt.restaurantType = rs.no
+    GROUP BY rs.name
+    ORDER BY rs.name DESC;
+    """)
+    List<RestaurantType> getCount();
 }

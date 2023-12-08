@@ -148,4 +148,24 @@ public interface RestaurantMapper {
 
             """)
     List<Restaurant> getIdSelectAll(Integer no);
+
+
+    @Select("""
+                SELECT rt.no,rt.place,rs.name AS typeName
+                FROM restaurant rt LEFT JOIN restauranttypes rs
+                ON  rt.restaurantType = rs.no
+                WHERE name=  #{name}
+                ORDER BY rs.name DESC
+                LIMIT 3;
+            """)
+    List<Restaurant> getTypeName(String name);
+
+
+    @Select("""
+           
+            SELECT *
+            FROM restaurant
+            WHERE restaurantType =#{restaurantType}
+            """)
+    List<Restaurant> getDetail(Integer restaurantType);
 }

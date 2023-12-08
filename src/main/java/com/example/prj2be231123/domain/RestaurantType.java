@@ -8,4 +8,6 @@ public class RestaurantType {
     private Integer no;
 
     private String name;
+
+    private Integer count;
 }

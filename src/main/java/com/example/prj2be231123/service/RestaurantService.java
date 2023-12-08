@@ -50,7 +50,6 @@ public class RestaurantService {
     public boolean save(
             Restaurant restaurant, String restaurantTypeName, List<String> restaurantPurpose, MultipartFile[] files,
             Member login) throws IOException {
-
         restaurant.setWriter(login.getId());
 
         int typeNo = categoryMapper.getTypeNo(restaurantTypeName);
@@ -73,7 +72,6 @@ public class RestaurantService {
                 upload(restaurant.getNo(), files[i]);
             }
         }
-
         return cnt == 1;
     }
 
@@ -88,8 +86,6 @@ public class RestaurantService {
                 .build();
 
         s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
-
     }
 
 
@@ -102,6 +98,7 @@ public class RestaurantService {
         List<Integer> purposeById = purposeJoinMapper.getPurposeById(no);
 
         List<RestaurantPurpose> restaurantPurposes = new ArrayList<>();
+
         for (Integer purposeId : purposeById) {
             restaurantPurposes.add(purposeMapper.getByName(purposeId));
 
@@ -118,14 +115,10 @@ public class RestaurantService {
         }
 
         restaurant.setFiles(files);
-        // TODO : 해당 맛집에 달린 리스트 출력
-        // TODO : 1. 맛집 게시물 번호로 리뷰 조회 테이블 검색
-        // TODO : 2. 해쉬 맵에 저장 레스토랑 정보 + 리뷰 정보
-        // TODO : 3. 리뷰 별점 ?
-        // TODO : 4.
 
         List<Review> reivews = new ArrayList<>();
-       reivews.addAll(reviewMapper.selectByRestaurant(no));
+
+        reivews.addAll(reviewMapper.selectByRestaurant(no));
 
         map.put("restaurant",restaurant);
         map.put("reviews",reivews);
@@ -145,32 +138,30 @@ public class RestaurantService {
         int countAll = 0;
         int from = (page - 1) * 6;
 
+        if(checkBoxIds.size()==0){
 
-       if(checkBoxIds.size()==0){
+            countAll =  mapper.countAll(typeno,"%" + keyword + "%", category);
+            restaurantList = mapper.selectAll(from,typeno,"%" + keyword + "%", category);
 
-         countAll =  mapper.countAll(typeno,"%" + keyword + "%", category);
-           restaurantList = mapper.selectAll(from,typeno,"%" + keyword + "%", category);
+        }
 
-       }
+        if (checkBoxIds.size() !=0){
+            List<Integer> purposeNo = new ArrayList<>();
+            for (String name : checkBoxIds) {
+                purposeNo.add(purposeMapper.getByNo(name));
+            }
 
-       if (checkBoxIds.size() !=0){
-           List<Integer> purposeNo = new ArrayList<>();
-           for (String name : checkBoxIds) {
-               purposeNo.add(purposeMapper.getByNo(name));
-           }
+            List<Integer> restaurantNo = new ArrayList<>();
 
-           List<Integer> restaurantNo = new ArrayList<>();
+            for (Integer no : purposeNo){
+                restaurantNo.addAll(purposeJoinMapper.selectByRestaurantsNo(no));
+            }
 
-           for (Integer no : purposeNo){
-               restaurantNo.addAll(purposeJoinMapper.selectByRestaurantsNo(no));
-           }
-
-           List<Integer> newRestaurantNo = restaurantNo
-                   .stream()
-                   .distinct()
-                   .toList();
-
-           int limit = (newRestaurantNo.size()-(newRestaurantNo.size()-(from+6)));
+            List<Integer> newRestaurantNo = restaurantNo
+                    .stream()
+                    .distinct()
+                    .toList();
+            int limit = (newRestaurantNo.size()-(newRestaurantNo.size()-(from+6)));
 
             if(newRestaurantNo.size() < limit) {
                 int num = limit-newRestaurantNo.size();
@@ -181,15 +172,12 @@ public class RestaurantService {
                 }
             }else{
                 for (int j = from; j < limit; j++) {
-                   Integer no = newRestaurantNo.get(j);
-                   restaurantList.addAll(mapper.getIdSelectAll(no));
-              }
+                    Integer no = newRestaurantNo.get(j);
+                    restaurantList.addAll(mapper.getIdSelectAll(no));
+                }
             }
-
-           countAll =newRestaurantNo.size();
-
-       }
-
+            countAll =newRestaurantNo.size();
+        }
 
         int lastPageNumber = (countAll - 1) / 6+ 1;
 
@@ -213,7 +201,7 @@ public class RestaurantService {
         if (nextPageNumber <= lastPageNumber) {
             pageInfo.put("nextPageNumber", nextPageNumber);
         }
-        
+
         for (Restaurant restaurant : restaurantList) {
             List<RestaurantFile> files = fileMapper.selectAllNamesById(restaurant.getNo());
 
@@ -235,14 +223,8 @@ public class RestaurantService {
     public boolean remove(Integer no) {
         purposeJoinMapper.deleteByRestaurantNo(no);
 
+        List<Integer> reviews = reviewMapper.selectListByRestaurantN(no);
 
-        //TODO : 레스토랑 no => review에 전달해서 삭제
-        //TODO : 레스토랑 맵핑하여 작성된 리뷰 찾기
-        //        => starpoin 삭제
-
-        List<Integer> reviews = reviewMapper.selectListByRestaurantNo(no);
-
-        System.out.println("reviews = " + reviews);
         reviews.forEach((reviewNo)->  reviewSercive.remove(reviewNo));
 
         deleteFile(no);
@@ -252,7 +234,6 @@ public class RestaurantService {
 
 
     private void deleteFile(Integer no) {
-
         List<RestaurantFile> restaurantFiles = fileMapper.selectNamesById(no);
 
         for (RestaurantFile file : restaurantFiles) {
@@ -383,7 +364,6 @@ public class RestaurantService {
             return false;
         }
 
-
         boolean admin = login.getAuth().stream()
                 .map(n -> n.getManager())
                 .anyMatch(a -> a.equals("admin"));
@@ -394,4 +374,41 @@ public class RestaurantService {
 
         return admin;
     }
+
+    public HashMap<String,Object> selectTypeList() {
+        //TODO : 리스트에 저장된 배열을 담을 HashMap
+        HashMap<String,Object> map=new HashMap<>();
+
+        //TODO : 레스토랑 정보를 담을 리스트
+        List<Restaurant> restaurantList = new ArrayList<>();
+
+        //TODO : 카테고리 이름 전부 찾아서 리스트에 저장
+        List<String> typeName = categoryMapper.getTypesName();
+
+        //TODO : 각 카테고리에 총 테이블 수를 RestaurantType 객체 리스트에 저장
+        List<RestaurantType> restaurantTypeList = categoryMapper.getCount();
+
+
+        for (String name:typeName){
+            restaurantList.addAll(mapper.getTypeName(name));
+        }
+
+        for (Restaurant restaurant : restaurantList) {
+            List<RestaurantFile> files = fileMapper.selectNameById(restaurant.getNo());
+
+            for (RestaurantFile file : files) {
+                String url = urlPrefix + "prj2/restaurant/" + restaurant.getNo() + "/" + file.getFileName();
+                file.setUrl(url);
+            }
+            restaurant.setFiles(files);
+        }
+
+        map.put("typeName",restaurantTypeList);
+
+        map.put("restaurantList",restaurantList);
+
+        return map;
+    }
+
+
 }

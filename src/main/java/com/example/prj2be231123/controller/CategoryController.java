@@ -30,7 +30,7 @@ public class CategoryController {
     public ResponseEntity addTypes(
             @RequestBody RestaurantType restaurantType,
             @SessionAttribute(value = "login",required = false)Member login
-            ){
+    ){
 
         if(login==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
@@ -80,13 +80,13 @@ public class CategoryController {
             @RequestBody RestaurantType restaurantType
     ){
         if (!service.restaurantTypeValidate(restaurantType)){
-          return   ResponseEntity.badRequest().build();
+            return   ResponseEntity.badRequest().build();
         }
 
         if (service.typesUpdate(restaurantType)){
-          return   ResponseEntity.ok().build();
+            return   ResponseEntity.ok().build();
         }else{
-          return   ResponseEntity.internalServerError().build();
+            return   ResponseEntity.internalServerError().build();
         }
     }
 

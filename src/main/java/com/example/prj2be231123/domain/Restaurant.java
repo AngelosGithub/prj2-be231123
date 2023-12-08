@@ -26,8 +26,12 @@ public class Restaurant {
     private  String city;
 
     private  int restaurantType;
+
     private String writer;
+
     private int starPoint;
+
+    private String typeName;
 
     private List<RestaurantFile> files;
 

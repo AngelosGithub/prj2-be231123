@@ -106,9 +106,9 @@ public class CategoryService {
 
         List<Integer> restaurantByNo = joinMapper.selectByRestaurantNo(no);
 
-       restaurantByNo.forEach((restaurantNo)->   restaurantService.remove(restaurantNo));
+        restaurantByNo.forEach((restaurantNo)->   restaurantService.remove(restaurantNo));
 
-       return categoryMapper.purposeRemove(no) ==1;
+        return categoryMapper.purposeRemove(no) ==1;
     }
 
     public boolean hasAccess(Member login) {
