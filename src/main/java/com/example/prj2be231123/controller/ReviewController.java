@@ -84,8 +84,14 @@ public class ReviewController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(@RequestBody Review review,
+    public ResponseEntity edit(Review review,
+                               @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
+                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
                                @SessionAttribute(value = "login", required = false) Member login) {
+        System.out.println("review = " + review);
+        System.out.println("removeFileIds = " + removeFileIds);
+        System.out.println("uploadFiles = " + uploadFiles);
+
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
