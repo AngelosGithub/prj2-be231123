@@ -1,9 +1,11 @@
 package com.example.prj2be231123.controller;
 
+import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Restaurant;
 import com.example.prj2be231123.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,15 +36,25 @@ public class RestaurantController {
             Restaurant restaurant,
             @RequestParam(value = "restaurantTypeName" , required = false) String restaurantTypeName,
             @RequestParam(value = "checkBoxIds[]" , required = false)List<String> restaurantPurpose,
-            @RequestParam(value = "uploadFiles[]" ,required = false)MultipartFile[] files
+            @RequestParam(value = "uploadFiles[]" ,required = false)MultipartFile[] files,
+            @SessionAttribute(value = "login",required = false)Member login
             )throws IOException  {
+
+        if(login==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
+        }
+
+
+        if(!service.hasAccess(login)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         if(!service.restaurantValidate(restaurant,restaurantTypeName,restaurantPurpose,files)){
             return ResponseEntity.badRequest().build();
         }
 
 
-        if(service.save(restaurant,restaurantTypeName,restaurantPurpose,files)){
+        if(service.save(restaurant,restaurantTypeName,restaurantPurpose,files,login)){
             return ResponseEntity.ok().build();
         }else {
             return ResponseEntity.internalServerError().build();
@@ -57,6 +69,8 @@ public class RestaurantController {
             @RequestParam(value = "purpose",defaultValue = "")List<String>  checkBoxIds
             ,@RequestParam(value ="typeno",defaultValue = "0")Integer typeno
     ){
+
+
 
         return service.selectAll(page,keyword,category,checkBoxIds,typeno);
     }
@@ -73,8 +87,19 @@ public class RestaurantController {
 
     @DeleteMapping("remove/{no}")
     public ResponseEntity remove(
-            @PathVariable Integer no
+            @PathVariable Integer no,
+            @SessionAttribute(value = "login",required = false) Member login
     ){
+        if(login==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
+        }
+
+
+        if(!service.hasAccess(login)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+
 
         if (service.remove(no)){
             return ResponseEntity.ok().build();
@@ -90,10 +115,18 @@ public class RestaurantController {
             @RequestParam(value = "restaurantTypeName" , required = false) String restaurantTypeName,
             @RequestParam(value = "checkBoxIds[]" , required = false)List<String> restaurantPurpose,
             @RequestParam(value = "removeFileIds[]" , required = false)List<Integer> removeFileIds,
-            @RequestParam(value = "uploadFiles[]" ,required = false)MultipartFile[] uploadFiles
+            @RequestParam(value = "uploadFiles[]" ,required = false)MultipartFile[] uploadFiles,
+            @SessionAttribute(value = "login",required = false) Member login
     )throws IOException{
 
+        if(login==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
+        }
 
+
+        if(!service.hasAccess(login)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         if(!service.restaurantValidate(restaurant,restaurantTypeName,restaurantPurpose,uploadFiles)){
             return ResponseEntity.badRequest().build();

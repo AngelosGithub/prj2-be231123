@@ -1,10 +1,12 @@
 package com.example.prj2be231123.controller;
 
 
+import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.RestaurantPurpose;
 import com.example.prj2be231123.domain.RestaurantType;
 import com.example.prj2be231123.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,18 @@ public class CategoryController {
 
     @PostMapping("add/restaurantTypes")
     public ResponseEntity addTypes(
-            @RequestBody RestaurantType restaurantType
+            @RequestBody RestaurantType restaurantType,
+            @SessionAttribute(value = "login",required = false)Member login
             ){
+
+        if(login==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
+        }
+
+
+        if(!service.hasAccess(login)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         if(!service.restaurantTypeValidate(restaurantType)){
             return ResponseEntity.badRequest().build();

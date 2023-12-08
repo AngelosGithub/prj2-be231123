@@ -1,9 +1,6 @@
 package com.example.prj2be231123.service;
 
-import com.example.prj2be231123.domain.Restaurant;
-import com.example.prj2be231123.domain.RestaurantFile;
-import com.example.prj2be231123.domain.RestaurantPurpose;
-import com.example.prj2be231123.domain.Review;
+import com.example.prj2be231123.domain.*;
 import com.example.prj2be231123.mapper.*;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +35,7 @@ public class RestaurantService {
 
     private final  ReviewMapper reviewMapper;
 
+    private final ReviewService reviewSercive;
 
     @Value("${aws.bucketName}")
     private String bucket;
@@ -50,8 +48,10 @@ public class RestaurantService {
 
 
     public boolean save(
-            Restaurant restaurant, String restaurantTypeName, List<String> restaurantPurpose, MultipartFile[] files
-    ) throws IOException {
+            Restaurant restaurant, String restaurantTypeName, List<String> restaurantPurpose, MultipartFile[] files,
+            Member login) throws IOException {
+
+        restaurant.setWriter(login.getId());
 
         int typeNo = categoryMapper.getTypeNo(restaurantTypeName);
         restaurant.setRestaurantType(typeNo);
@@ -235,6 +235,16 @@ public class RestaurantService {
     public boolean remove(Integer no) {
         purposeJoinMapper.deleteByRestaurantNo(no);
 
+
+        //TODO : 레스토랑 no => review에 전달해서 삭제
+        //TODO : 레스토랑 맵핑하여 작성된 리뷰 찾기
+        //        => starpoin 삭제
+
+        List<Integer> reviews = reviewMapper.selectListByRestaurantNo(no);
+
+        System.out.println("reviews = " + reviews);
+        reviews.forEach((reviewNo)->  reviewSercive.remove(reviewNo));
+
         deleteFile(no);
 
         return mapper.deleteByNo(no) == 1;
@@ -365,5 +375,23 @@ public class RestaurantService {
         }
 
         return  true;
+    }
+
+    public boolean hasAccess(Member login) {
+
+        if (login == null){
+            return false;
+        }
+
+
+        boolean admin = login.getAuth().stream()
+                .map(n -> n.getManager())
+                .anyMatch(a -> a.equals("admin"));
+
+        if(!admin){
+            return false;
+        }
+
+        return admin;
     }
 }

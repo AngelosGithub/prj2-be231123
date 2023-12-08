@@ -17,4 +17,13 @@ public class Member {
     private String birthDate;
     private LocalDateTime inserted;
     private List<Auth> auth;
+
+    public boolean isAdmin(){
+        if (auth!=null){
+            auth.stream()
+                    .map(a->a.getManager())
+                    .anyMatch(n->n.equals("admin"));
+        }
+        return false;
+    }
 }
