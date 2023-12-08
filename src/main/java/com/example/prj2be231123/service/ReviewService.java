@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -137,10 +138,30 @@ public class ReviewService {
         // 1. 게시물에 있는 댓글 지우기
         commentMapper.deleteByReviewId(no);
 
-        // 2. 게시물에 있는 파일 지우기
-        fileMapper.deleteByReviewId(no);
+        deleteFile(no);
 
         return mapper.deleteById(no) == 1;
+    }
+
+    private void deleteFile(Integer no) {
+        // TODO 글 삭제 한 후 aws 파일 삭제 되는지 확인
+        // 파일명 조회
+        List<ReviewFile> reviewFiles = fileMapper.selectFilesByReviewId(no);
+
+        // s3 버킷의 오브젝트 지우기
+        for (ReviewFile file : reviewFiles) {
+            String key = "prj2/review/" + no + "/" + file.getFileName();
+
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+
+            s3.deleteObject(objectRequest);
+        }
+
+        // 게시물에 있는 파일의 레코드 지우기
+        fileMapper.deleteByReviewId(no);
     }
 
     public boolean update(Review review) {
