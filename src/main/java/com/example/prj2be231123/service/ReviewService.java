@@ -6,6 +6,7 @@ import com.example.prj2be231123.domain.ReviewFile;
 import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
+import com.example.prj2be231123.mapper.StarMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class ReviewService {
     private final ReviewMapper mapper;
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
+    private final StarMapper starMapper;
 
     private final S3Client s3;
 
@@ -39,11 +41,16 @@ public class ReviewService {
     @Value("${aws.bucketName}")
     private String bucket;
 
-    public boolean save(Review review, Member login, MultipartFile[] files) throws IOException {
+    public boolean save(Review review, Member login, MultipartFile[] files, Integer no) throws IOException {
         // 로그인 한 사용자의 아이디를 가져옴
         review.setWriter(login.getId());
+        // 레스토랑 id를 받아서 글 작성시 필요한 RestaurantId 에 값을 넣는다
+        review.setRestaurantId(no);
 
         int cnt = mapper.insert(review);
+
+        int num = 3;
+        int star = starMapper.insert(review.getNo(), login.getId(), num);
 
         // reviewFile 테이블에 files 정보 저장(파일의 이름만)
         if (files != null) {

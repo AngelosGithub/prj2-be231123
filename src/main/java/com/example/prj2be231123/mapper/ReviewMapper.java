@@ -13,6 +13,7 @@ public interface ReviewMapper {
             VALUES (#{title}, #{recommend}, #{content}, #{writer}, #{restaurantId})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "no")
+    // 파일 첨부할 글의 번호를 알아냄
     int insert(Review review);
 
     @Select("""
