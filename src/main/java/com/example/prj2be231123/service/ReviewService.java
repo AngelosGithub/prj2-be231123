@@ -164,7 +164,38 @@ public class ReviewService {
         fileMapper.deleteByReviewId(no);
     }
 
-    public boolean update(Review review) {
+    public boolean update(Review review, List<Integer> removeFileIds, MultipartFile[] uploadFiles) throws IOException {
+        // 파일 수정은 데이터베이스의 값을 변경하는것이 아니라서
+        // aws에 있는 파일을 지우고 새로운 파일을 추가하는 방식으로 사용
+        // TODO 파일 수정 기능 db외래키 확인후 재확인 요망
+        // 파일 지우기
+        if (removeFileIds != null) {
+            for (Integer no : removeFileIds) {
+                // s3에서 지우기
+                ReviewFile file = fileMapper.selectById(no);
+
+                String key = "prj2/review/" + review.getNo() + "/" + file.getFileName();
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
+                s3.deleteObject(objectRequest);
+
+                // db에서 지우기
+                fileMapper.deleteById(no);
+            }
+        }
+        // 파일 추가하기
+        if (uploadFiles != null) {
+            for (MultipartFile file : uploadFiles) {
+                // s3에서 추가하기
+                upload(file, review.getNo());
+
+                // db에서 추가하기
+                fileMapper.insert(review.getNo(), file.getOriginalFilename());
+            }
+        }
+
         return mapper.update(review) == 1;
     }
 

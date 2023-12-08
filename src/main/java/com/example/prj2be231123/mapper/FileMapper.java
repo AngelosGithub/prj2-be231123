@@ -29,4 +29,17 @@ public interface FileMapper {
             WHERE reviewId = #{reviewId}
             """)
     int deleteByReviewId(Integer reviewId);
+
+    @Select("""
+            SELECT *
+            FROM reviewfile
+            WHERE no = #{no}
+            """)
+    ReviewFile selectById(Integer no);
+
+    @Delete("""
+DELETE FROM reviewfile
+WHERE no = #{no}
+""")
+    int deleteById(Integer no);
 }
