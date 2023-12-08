@@ -41,7 +41,7 @@ public class ReviewService {
     @Value("${aws.bucketName}")
     private String bucket;
 
-    public boolean save(Review review, Member login, MultipartFile[] files, Integer no) throws IOException {
+    public boolean save(Review review, Member login, MultipartFile[] files, Integer no, Integer point) throws IOException {
         // 로그인 한 사용자의 아이디를 가져옴
         review.setWriter(login.getId());
         // 레스토랑 id를 받아서 글 작성시 필요한 RestaurantId 에 값을 넣는다
@@ -49,8 +49,7 @@ public class ReviewService {
 
         int cnt = mapper.insert(review);
 
-        int num = 3;
-        int star = starMapper.insert(review.getNo(), login.getId(), num);
+        int star = starMapper.insert(review.getNo(), login.getId(), point);
 
         // reviewFile 테이블에 files 정보 저장(파일의 이름만)
         if (files != null) {
@@ -143,17 +142,19 @@ public class ReviewService {
 
     public boolean remove(Integer no) {
 
-
         // 1. 게시물에 있는 댓글 지우기
         commentMapper.deleteByReviewId(no);
 
+        // 2. 별점 지우기
+        starMapper.deleteByReviewId(no);
+
+        // 파일 지우기
         deleteFile(no);
 
         return mapper.deleteById(no) == 1;
     }
 
     private void deleteFile(Integer no) {
-        // TODO 글 삭제 한 후 aws 파일 삭제 되는지 확인
         // 파일명 조회
         List<ReviewFile> reviewFiles = fileMapper.selectFilesByReviewId(no);
 

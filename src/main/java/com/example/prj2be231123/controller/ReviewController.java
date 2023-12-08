@@ -24,6 +24,7 @@ public class ReviewController {
     @PostMapping("add")
     public ResponseEntity add(Review review,
                               @RequestParam(value = "no", required = false) Integer no,
+                              @RequestParam(value = "point", required = false) Integer point,
                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 //        파일 요청을 받는지 확인
@@ -34,6 +35,7 @@ public class ReviewController {
 //            }
 //        }
         System.out.println("no = " + no);
+        System.out.println("point = " + point);
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -44,7 +46,7 @@ public class ReviewController {
 //            return ResponseEntity.badRequest().build();
 //        }
 
-        if (service.save(review, login, files, no)) {
+        if (service.save(review, login, files, no, point)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();

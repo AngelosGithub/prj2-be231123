@@ -27,7 +27,7 @@ public interface RestaurantMapper {
              r.info, 
              r.address,
               r.district, 
-              r.y, x, 
+              r.y, r.x, 
               r.phone, 
               r.restaurantType,
               r.city,
@@ -43,13 +43,13 @@ public interface RestaurantMapper {
     @Select("""
            <script>
                 SELECT
-                rt.no, 
-                rt.place, 
-                rt.info, 
+                rt.no,
+                rt.place,
+                rt.info,
                 rt.address,
-                rt.district, 
-                rt.y, x, 
-                rt.phone, 
+                rt.district,
+                rt.y, rt.x,
+                rt.phone,
                 rt.restaurantType,
                 rt.city,
                 AVG(st.point) starPoint
@@ -57,7 +57,7 @@ public interface RestaurantMapper {
                 on rt.no = rv.restaurantId
                 left join starpoint st
                 on st.reviewId = rv.no
-           <where>  
+           <where>
            <trim prefixOverrides="OR">
               <choose>
                <when test="restaurantType != 0">
@@ -72,11 +72,11 @@ public interface RestaurantMapper {
                             OR district LIKE #{keyword}
                     </when>
                
-                 </choose>  
+                 </choose>
            </trim>
           </where>
           GROUP BY rt.no
-          ORDER BY  rt.no DESC 
+          ORDER BY  rt.no DESC
           LIMIT #{from}, 6;
            </script>
             """)
@@ -92,7 +92,7 @@ public interface RestaurantMapper {
             <script>
                 SELECT COUNT(*)
                 FROM restaurant
-              <where>  
+              <where>
                 <trim prefixOverrides="OR">
                  <choose>
                  <when test="restaurantType != 0">
@@ -107,7 +107,7 @@ public interface RestaurantMapper {
                             OR district LIKE #{keyword}
                     </when>
                
-                 </choose>  
+                 </choose>
                 </trim>
              </where>  
             </script>
@@ -116,7 +116,7 @@ public interface RestaurantMapper {
 
     @Update("""
                 UPDATE restaurant
-                SET 
+                SET
                 place =  #{place},
                 info = #{info},
                 address = #{address},
@@ -125,7 +125,7 @@ public interface RestaurantMapper {
                 x=#{x},
                 phone =#{phone},
                 city = #{city},
-                restaurantType = #{restaurantType} 
+                restaurantType = #{restaurantType}
                  WHERE no = #{no}      
             """)
     int update(Restaurant restaurant);
@@ -143,7 +143,7 @@ public interface RestaurantMapper {
                 SELECT *
                 FROM restaurant
                 WHERE no = #{no}
-                ORDER BY  no DESC 
+                ORDER BY  no DESC
             
 
             """)
