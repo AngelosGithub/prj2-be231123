@@ -137,6 +137,9 @@ public class ReviewService {
         // 1. 게시물에 있는 댓글 지우기
         commentMapper.deleteByReviewId(no);
 
+        // 2. 게시물에 있는 파일 지우기
+        fileMapper.deleteByReviewId(no);
+
         return mapper.deleteById(no) == 1;
     }
 
