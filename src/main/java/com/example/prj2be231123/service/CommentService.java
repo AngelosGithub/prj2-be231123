@@ -5,11 +5,13 @@ import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class CommentService {
 
     private final CommentMapper mapper;
@@ -40,5 +42,35 @@ public class CommentService {
 
     public List<Comment> list(Integer reviewId) {
         return mapper.selectByReviewId(reviewId);
+    }
+
+    public boolean remove(Integer no) {
+        return mapper.deleteById(no) == 1;
+    }
+
+    public boolean hasAccess(Integer no, Member login) {
+        Comment comment = mapper.selectById(no);
+
+        return comment.getMemberId().equals(login.getId());
+    }
+
+    public boolean update(Comment comment) {
+        return mapper.update(comment) == 1;
+    }
+
+    public boolean editValidate(Comment comment) {
+        if (comment == null) {
+            return false;
+        }
+
+        if (comment.getNo() == null) {
+            return false;
+        }
+
+        if (comment.getComment() == null || comment.getComment().isBlank()) {
+            return false;
+        }
+
+        return true;
     }
 }

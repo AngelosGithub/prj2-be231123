@@ -12,17 +12,34 @@ public interface ReviewMapper {
             INSERT INTO review (title, recommend, content, writer, restaurantId)
             VALUES (#{title}, #{recommend}, #{content}, #{writer}, #{restaurantId})
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "no")
     int insert(Review review);
 
     @Select("""
-            SELECT r.no, r.title, m.nickName, r.writer, r.inserted
+            SELECT r.no,
+                   r.title,
+                   m.nickName,
+                   r.writer,
+                   r.inserted,
+                   COUNT(c.no) countComment
             FROM review r JOIN member m ON r.writer = m.id
+                          LEFT JOIN comment c ON r.no = c.reviewId
+            WHERE r.content LIKE #{keyword}
+               OR r.title LIKE #{keyword}
+            GROUP BY r.no
             ORDER BY r.no DESC
+            LIMIT #{from}, 9;
             """)
-    List<Review> selectAll();
+    List<Review> selectAll(Integer from, String keyword);
 
     @Select("""
-            SELECT r.no, r.title, r.recommend, r.content, r.writer, m.nickName, r.inserted
+            SELECT r.no,
+                   r.title,
+                   r.recommend,
+                   r.content,
+                   r.writer,
+                   m.nickName,
+                   r.inserted
             FROM review r JOIN member m ON r.writer = m.id
             WHERE r.no = #{no}
             """)
@@ -52,12 +69,12 @@ public interface ReviewMapper {
 
     @Select("""
              SELECT  rv.no,
-              rv.title, 
-              rv.recommend, 
-              rv.content,
-               rv.writer, 
-               rv.inserted,
-               st.point starPoint
+                     rv.title,
+                     rv.recommend,
+                     rv.content,
+                     rv.writer,
+                     rv.inserted,
+                     st.point starPoint
              FROM review rv left join starpoint st
                      on rv.no = st.reviewId
              WHERE restaurantId = #{restaurantId}
@@ -72,4 +89,16 @@ public interface ReviewMapper {
                 WHERE restaurantId = #{restaurantId}
             """)
     List<Integer> selectListByRestaurantNo(Integer no);
+
+    @Select("""
+            SELECT no
+            FROM review
+            WHERE writer = #{id}
+            """)
+    List<Integer> selectIdListByMemberId(String writer);
+
+    @Select("""
+            SELECT COUNT(*) FROM review;
+            """)
+    int allPages();
 }

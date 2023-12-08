@@ -1,9 +1,10 @@
 package com.example.prj2be231123.domain;
 
+import com.example.prj2be231123.util.AppUtil;
 import lombok.Data;
-import org.apache.ibatis.annotations.Insert;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class Review {
@@ -15,5 +16,12 @@ public class Review {
     private String nickName;
     private Integer restaurantId;
     private LocalDateTime inserted;
-    private int starPoint;
+    private Integer countComment;
+    private Integer starPoint;
+
+    private List<ReviewFile> files;
+
+    public String getAgo() {
+        return AppUtil.getAgo(inserted, LocalDateTime.now());
+    }
 }

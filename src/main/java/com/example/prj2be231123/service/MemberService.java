@@ -2,10 +2,12 @@ package com.example.prj2be231123.service;
 
 import com.example.prj2be231123.domain.Auth;
 import com.example.prj2be231123.domain.Member;
+import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.MemberMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
@@ -13,9 +15,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class MemberService {
     private final MemberMapper mapper;
     private final ReviewMapper reviewMapper;
+    private final CommentMapper commentMapper;
+    private final ReviewService reviewService;
 
 
     public boolean add(Member member) {
@@ -86,8 +91,19 @@ public class MemberService {
     }
 
     public boolean deleteMember(String id) {
-        reviewMapper.deleteByWriter(id);
+        // 이 멤버가 작성한 댓글 삭제
+        commentMapper.deleteByMemberId(id);
 
+        // 이 멤버가 작성한 게시물 삭제
+        // 1.삭제시 게시물 번호를 조회하여
+        List<Integer> reviewIdList = reviewMapper.selectIdListByMemberId(id);
+        // 2.번호를 loop 사용하여 다른사람이 작성한 댓글도 삭제(reviewService.remove 사용)
+        reviewIdList.forEach((reviewId) -> reviewService.remove(reviewId));
+
+//        reviewMapper.deleteByWriter(id);
+//        기존 코드 삭제
+
+        // 멤버 삭제
         return mapper.deleteById(id) == 1;
     }
 

@@ -45,4 +45,47 @@ public class CommentController {
     public List<Comment> list(@RequestParam("id") Integer reviewId) {
         return service.list(reviewId);
     }
+
+    @DeleteMapping("{no}")
+    public ResponseEntity remove(@PathVariable Integer no,
+                                         @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+        if (service.hasAccess(no, login)) {
+            if (service.remove(no)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+    }
+
+    @PutMapping("edit")
+    public ResponseEntity update(@RequestBody Comment comment,
+                       @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.hasAccess(comment.getNo(), login)) {
+            if (!service.editValidate(comment)) {
+                // reviewId가 필요없기 때문에 다시 만든다
+                return ResponseEntity.badRequest().build();
+            }
+
+             if (service.update(comment)) {
+                 return ResponseEntity.ok().build();
+             } else {
+                 return ResponseEntity.internalServerError().build();
+             }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+    }
 }

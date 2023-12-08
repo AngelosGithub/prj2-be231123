@@ -8,8 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,8 +22,17 @@ public class ReviewController {
     private final ReviewService service;
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody Review review,
-                              @SessionAttribute(value = "login", required = false) Member login) {
+    public ResponseEntity add(Review review,
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
+                              @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+//        파일 요청을 받는지 확인
+//        if (files != null) {
+//            for (int i = 0; i < files.length; i++) {
+//                System.out.println("file = " + files[i].getOriginalFilename());
+//                System.out.println("file = " + files[i].getSize());
+//            }
+//        }
+
         System.out.println("login = " + login);
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -30,16 +43,21 @@ public class ReviewController {
 //            return ResponseEntity.badRequest().build();
 //        }
 
-        if (service.save(review, login)) {
+        if (service.save(review, login, files)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
         }
     }
 
+    // /api/review/list?p=1
+    // /api/review/list?k=words
     @GetMapping("list")
-    public List<Review> list() {
-        return service.list();
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
+                                    @RequestParam(value = "k", defaultValue = "") String keyword) {
+        // 페이지를 나누기 위한 프로퍼티 입력
+        // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
+        return service.list(page, keyword);
     }
 
     @GetMapping("no/{no}")
@@ -66,8 +84,11 @@ public class ReviewController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(@RequestBody Review review,
-                               @SessionAttribute(value = "login", required = false) Member login) {
+    public ResponseEntity edit(Review review,
+                               @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
+                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
+                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -77,7 +98,7 @@ public class ReviewController {
         }
 
         if (service.validate(review)) {
-            if (service.update(review)) {
+            if (service.update(review, removeFileIds, uploadFiles)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();

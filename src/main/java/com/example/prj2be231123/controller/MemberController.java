@@ -92,6 +92,7 @@ public class MemberController {
 
     @DeleteMapping
     public ResponseEntity delete(String id,
+                                 HttpSession session,
                                  @SessionAttribute(value = "login", required = false) Member login) {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -102,6 +103,9 @@ public class MemberController {
         }
 
         if (service.deleteMember(id)) {
+            // 회원 탈퇴시 로그아웃까지
+            session.invalidate();
+
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
