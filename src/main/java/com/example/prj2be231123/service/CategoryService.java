@@ -1,5 +1,6 @@
 package com.example.prj2be231123.service;
 
+import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.RestaurantPurpose;
 import com.example.prj2be231123.domain.RestaurantType;
 import com.example.prj2be231123.mapper.CategoryMapper;
@@ -109,4 +110,24 @@ public class CategoryService {
 
        return categoryMapper.purposeRemove(no) ==1;
     }
+
+    public boolean hasAccess(Member login) {
+
+        if(login==null){
+            return false;
+        }
+
+        boolean admin = login.getAuth().stream()
+                .map(n -> n.getManager())
+                .anyMatch(a -> a.equals("admin"));
+
+        if(!admin){
+            return false;
+        }
+
+
+        return admin;
+    }
+
+
 }

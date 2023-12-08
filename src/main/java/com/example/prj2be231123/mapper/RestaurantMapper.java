@@ -11,9 +11,9 @@ public interface RestaurantMapper {
 
     @Insert("""
                 INSERT INTO  restaurant(
-                place, info, address, district, y, x, phone, city,restaurantType)
+                 writer,place, info, address, district, y, x, phone, city,restaurantType)
                 VALUES (
-                #{place},#{info},#{address},#{district},#{y},
+                 #{writer},#{place},#{info},#{address},#{district},#{y},
                 #{x},#{phone},#{city},#{restaurantType}
                 )
             """)

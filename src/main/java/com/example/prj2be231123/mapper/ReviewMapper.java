@@ -82,6 +82,14 @@ public interface ReviewMapper {
             """)
     List<Review> selectByRestaurant(Integer restaurantId);
 
+
+    @Select("""
+                SELECT no
+                FROM review
+                WHERE restaurantId = #{restaurantId}
+            """)
+    List<Integer> selectListByRestaurantNo(Integer no);
+
     @Select("""
             SELECT no
             FROM review

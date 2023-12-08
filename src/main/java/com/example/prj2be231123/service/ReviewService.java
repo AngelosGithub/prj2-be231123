@@ -135,6 +135,8 @@ public class ReviewService {
     }
 
     public boolean remove(Integer no) {
+
+
         // 1. 게시물에 있는 댓글 지우기
         commentMapper.deleteByReviewId(no);
 
