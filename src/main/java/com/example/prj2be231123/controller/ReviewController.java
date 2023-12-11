@@ -2,6 +2,7 @@ package com.example.prj2be231123.controller;
 
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
+import com.example.prj2be231123.domain.Star;
 import com.example.prj2be231123.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +93,7 @@ public class ReviewController {
                                @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
                                @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
+        System.out.println("review = " + review);
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

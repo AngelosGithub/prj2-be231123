@@ -3,6 +3,7 @@ package com.example.prj2be231123.service;
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.domain.ReviewFile;
+import com.example.prj2be231123.domain.Star;
 import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
@@ -174,7 +175,9 @@ public class ReviewService {
         fileMapper.deleteByReviewId(no);
     }
 
-    public boolean update(Review review, List<Integer> removeFileIds, MultipartFile[] uploadFiles) throws IOException {
+    public boolean update(Review review,
+                          List<Integer> removeFileIds,
+                          MultipartFile[] uploadFiles) throws IOException {
         // 파일 수정은 데이터베이스의 값을 변경하는것이 아니라서
         // aws에 있는 파일을 지우고 새로운 파일을 추가하는 방식으로 사용
         // TODO 파일 수정 기능 db외래키 확인후 재확인 요망

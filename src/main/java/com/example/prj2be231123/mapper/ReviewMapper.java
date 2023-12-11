@@ -41,9 +41,9 @@ public interface ReviewMapper {
                    r.writer,
                    m.nickName,
                    r.inserted,
-                   sp.point starPoint
+                   st.point starPoint
             FROM review r JOIN member m ON r.writer = m.id
-                          JOIN starpoint sp ON r.no = sp.reviewId
+                          JOIN starpoint st ON r.no = st.reviewId
             WHERE r.no = #{no}
             """)
     Review selectById(Integer no);
@@ -58,7 +58,8 @@ public interface ReviewMapper {
             UPDATE review
             SET title = #{title},
                 recommend = #{recommend},
-                content = #{content}
+                content = #{content},
+                point = #{starPoint}
             WHERE no = #{no}
             """)
     int update(Review review);
