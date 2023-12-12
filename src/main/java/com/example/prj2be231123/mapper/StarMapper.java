@@ -1,5 +1,6 @@
 package com.example.prj2be231123.mapper;
 
+import com.example.prj2be231123.domain.Star;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,5 +26,5 @@ public interface StarMapper {
             SET point = #{point}
             WHERE reviewId = #{reviewId}
             """)
-    int update(int point, String memberId, Integer reviewId);
+    int update(Integer point, Integer reviewId);
 }

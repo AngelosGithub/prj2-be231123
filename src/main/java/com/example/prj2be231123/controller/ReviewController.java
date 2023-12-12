@@ -105,7 +105,7 @@ public class ReviewController {
         }
 
         if (service.validate(review)) {
-            if (service.update(review, point, login, removeFileIds, uploadFiles)) {
+            if (service.update(review, point, removeFileIds, uploadFiles)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();
