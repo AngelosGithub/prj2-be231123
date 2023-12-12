@@ -58,8 +58,7 @@ public interface ReviewMapper {
             UPDATE review
             SET title = #{title},
                 recommend = #{recommend},
-                content = #{content},
-                point = #{starPoint}
+                content = #{content}
             WHERE no = #{no}
             """)
     int update(Review review);

@@ -89,11 +89,13 @@ public class ReviewController {
 
     @PutMapping("edit")
     public ResponseEntity edit(Review review,
+                               @RequestParam(value = "point", required = false) Integer point,
                                @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
                                @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
                                @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
         System.out.println("review = " + review);
+        System.out.println("point = " + point);
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -103,7 +105,7 @@ public class ReviewController {
         }
 
         if (service.validate(review)) {
-            if (service.update(review, removeFileIds, uploadFiles)) {
+            if (service.update(review, point, login, removeFileIds, uploadFiles)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();

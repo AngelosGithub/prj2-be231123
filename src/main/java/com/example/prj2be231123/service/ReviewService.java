@@ -175,7 +175,8 @@ public class ReviewService {
         fileMapper.deleteByReviewId(no);
     }
 
-    public boolean update(Review review,
+    public boolean update(Review review, Integer point,
+                          Member login,
                           List<Integer> removeFileIds,
                           MultipartFile[] uploadFiles) throws IOException {
         // 파일 수정은 데이터베이스의 값을 변경하는것이 아니라서
@@ -208,6 +209,7 @@ public class ReviewService {
                 fileMapper.insert(review.getNo(), file.getOriginalFilename());
             }
         }
+        int star = starMapper.update(review.getNo(), login.getId(), point);
 
         return mapper.update(review) == 1;
     }
