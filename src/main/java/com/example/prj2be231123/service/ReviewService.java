@@ -208,6 +208,7 @@ public class ReviewService {
             }
         }
         starMapper.update(point, review.getNo());
+        // 별점을 게시물 번호와 함께 mapper로 넘김
 
         return mapper.update(review) == 1;
     }

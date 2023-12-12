@@ -27,4 +27,5 @@ public interface StarMapper {
             WHERE reviewId = #{reviewId}
             """)
     int update(Integer point, Integer reviewId);
+    // 받은 point 값과 글 번호로 별점을 수정하는 쿼리 작성
 }

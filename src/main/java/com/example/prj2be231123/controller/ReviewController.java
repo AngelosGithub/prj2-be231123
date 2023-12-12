@@ -35,8 +35,6 @@ public class ReviewController {
 //                System.out.println("file = " + files[i].getSize());
 //            }
 //        }
-        System.out.println("no = " + no);
-        System.out.println("point = " + point);
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -94,8 +92,6 @@ public class ReviewController {
                                @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
                                @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
-        System.out.println("review = " + review);
-        System.out.println("point = " + point);
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -106,6 +102,7 @@ public class ReviewController {
 
         if (service.validate(review)) {
             if (service.update(review, point, removeFileIds, uploadFiles)) {
+                // 별점(point)를 @RequestParam 어노테이션으로 받아서 서비스로 넘김
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();
