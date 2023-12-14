@@ -89,8 +89,22 @@ public class ReviewService {
 
         int from = (page - 1) * 9;
         // 페이지 나누기 위한 코드
-        int countAll = mapper.allPages("%" + keyword + "%");
+        int countAll =0;
         // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
+
+        if (no == null) {
+            countAll = mapper.allPages("%" + keyword + "%");
+            map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
+            // 검색기능을 위해 keyword 파라미터 추가
+        }
+
+        if (no != null) {
+            // 리뷰 더보기를 눌렀을 때 페이지 지정
+            List<Review> reviews = mapper.selectByRestaurantNo(from, no);
+            map.put("reviewList", reviews);
+            countAll = reviews.size();
+        }
+
         int lastPage = (countAll -1) / 9 + 1;
         // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
 
@@ -102,25 +116,7 @@ public class ReviewService {
         int prevPage = startPageNum - 10;
         int nextPage = endPageNum;
         // 페이지 이동 버튼 만들때 필요한 계산식
-
-        if (no == null) {
-            System.out.println("d.d = ");
-            countAll = mapper.allPages("%" + keyword + "%");
-            map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
-            // 검색기능을 위해 keyword 파라미터 추가
-        }
-        if (no != null) {
-            System.out.println("no = " + from);
-            List<Review> reviews = mapper.selectByRestaurantNo(from, no);
-            map.put("reviewList", reviews);
-            countAll = reviews.size();
-            System.out.println("reviews = " + reviews.size());
-        }
-
-
-
-
-
+        // 페이지 이동 버튼 만들때 필요한 계산식
 
         pageInfo.put("currentPage", page);
         // 현재 페이지 번호
