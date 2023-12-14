@@ -95,7 +95,7 @@ public class ReviewService {
         // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
 
         int startPageNum = (page -1) / 10 * 10 + 1;
-        int endPageNum = startPageNum + 10;
+        int endPageNum = startPageNum + 9;
         endPageNum = Math.min(endPageNum, lastPage);
         // 페이지의 시작과 끝을 넣을 변수
 
