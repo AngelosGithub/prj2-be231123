@@ -3,7 +3,6 @@ package com.example.prj2be231123.service;
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
 import com.example.prj2be231123.domain.ReviewFile;
-import com.example.prj2be231123.domain.Star;
 import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
@@ -83,17 +82,32 @@ public class ReviewService {
         // s3 bucket에 파일 업로드 하는 코드
     }
 
-    public Map<String, Object> list(Integer page, String keyword) {
+    public Map<String, Object> list(Integer page, String keyword, Integer no) {
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> pageInfo = new HashMap<>();
-
         int from = (page - 1) * 9;
         // 페이지 나누기 위한 코드
+        int countAll = 0;
+        if (no == null) {
+            System.out.println("d.d = ");
+            countAll = mapper.allPages();
+            map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
+            // 검색기능을 위해 keyword 파라미터 추가
+        }
+        if (no != null) {
+            System.out.println("no = " + from);
+            List<Review> reviews = mapper.selectByRestaurantNo(from, no);
+            map.put("reviewList", reviews);
+            countAll = reviews.size();
+            System.out.println("reviews = " + reviews.size());
+        }
 
-        int allPages = mapper.allPages();
+
+
+
         // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
-        int lastPage = (allPages -1) / 9 + 1;
+        int lastPage = (countAll -1) / 9 + 1;
         // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
 
         int startPageNum = (page -1) / 10 * 10 + 1;
@@ -119,8 +133,6 @@ public class ReviewService {
             pageInfo.put("nextPage", nextPage);
         }
 
-        map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
-        // 검색기능을 위해 keyword 파라미터 추가
         map.put("pageInfo", pageInfo);
 
         return map;

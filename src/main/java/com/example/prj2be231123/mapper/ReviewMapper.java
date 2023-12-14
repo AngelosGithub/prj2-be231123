@@ -112,4 +112,21 @@ public interface ReviewMapper {
                 WHERE restaurantId = #{restaurantId}
             """)
     List<Integer> selectListByRestaurantNo(Integer no);
+
+    @Select("""
+            SELECT r.no,
+                   r.title,
+                   m.nickName,
+                   r.writer,
+                   r.inserted,
+                   r.restaurantId,
+                   COUNT(c.no) countComment
+            FROM review r JOIN member m ON r.writer = m.id
+                          LEFT JOIN comment c ON r.no = c.reviewId
+            WHERE restaurantId = #{restaurantId}
+            GROUP BY r.no
+            ORDER BY r.no DESC
+            LIMIT #{from}, 9;
+""")
+    List<Review> selectByRestaurantNo(Integer from, Integer restaurantId);
 }
