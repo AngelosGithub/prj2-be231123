@@ -101,9 +101,11 @@ public interface ReviewMapper {
     List<Integer> selectIdListByMemberId(String writer);
 
     @Select("""
-            SELECT COUNT(*) FROM review;
+            SELECT COUNT(*) FROM review
+            WHERE title LIKE #{keyword}
+               OR content LIKE #{keyword};
             """)
-    int allPages();
+    int allPages(String keyword);
 
 
     @Select("""

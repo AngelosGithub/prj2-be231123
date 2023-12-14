@@ -86,12 +86,26 @@ public class ReviewService {
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> pageInfo = new HashMap<>();
+
         int from = (page - 1) * 9;
         // 페이지 나누기 위한 코드
-        int countAll = 0;
+        int countAll = mapper.allPages("%" + keyword + "%");
+        // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
+        int lastPage = (countAll -1) / 9 + 1;
+        // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
+
+        int startPageNum = (page -1) / 10 * 10 + 1;
+        int endPageNum = startPageNum + 10;
+        endPageNum = Math.min(endPageNum, lastPage);
+        // 페이지의 시작과 끝을 넣을 변수
+
+        int prevPage = startPageNum - 10;
+        int nextPage = endPageNum;
+        // 페이지 이동 버튼 만들때 필요한 계산식
+
         if (no == null) {
             System.out.println("d.d = ");
-            countAll = mapper.allPages();
+            countAll = mapper.allPages("%" + keyword + "%");
             map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
             // 검색기능을 위해 keyword 파라미터 추가
         }
@@ -106,18 +120,7 @@ public class ReviewService {
 
 
 
-        // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
-        int lastPage = (countAll -1) / 9 + 1;
-        // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
 
-        int startPageNum = (page -1) / 10 * 10 + 1;
-        int endPageNum = startPageNum + 10;
-        endPageNum = Math.min(endPageNum, lastPage);
-        // 페이지의 시작과 끝을 넣을 변수
-
-        int prevPage = startPageNum - 10;
-        int nextPage = endPageNum;
-        // 페이지 이동 버튼 만들때 필요한 계산식
 
         pageInfo.put("currentPage", page);
         // 현재 페이지 번호
