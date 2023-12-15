@@ -2,9 +2,7 @@ package com.example.prj2be231123.controller;
 
 import com.example.prj2be231123.domain.Member;
 import com.example.prj2be231123.domain.Review;
-import com.example.prj2be231123.domain.Star;
 import com.example.prj2be231123.service.ReviewService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,15 +32,16 @@ public class ReviewController {
 //                System.out.println("file = " + files[i].getSize());
 //            }
 //        }
+//        System.out.println("review = " + review);
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         // 맛집정보 받아올때까지 주석
-//        if (!service.validate(review)) {
-//            return ResponseEntity.badRequest().build();
-//        }
+        if (!service.validate(review, point)) {
+            return ResponseEntity.badRequest().build();
+        }
 
         if (service.save(review, login, files, no, point)) {
             return ResponseEntity.ok().build();
@@ -90,7 +88,7 @@ public class ReviewController {
     public ResponseEntity edit(Review review,
                                @RequestParam(value = "point", required = false) Integer point,
                                @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
-                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
+                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                                @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
         if (login == null) {
@@ -101,8 +99,8 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if (service.validate(review)) {
-            if (service.update(review, point, removeFileIds, uploadFiles)) {
+        if (service.validate(review, point)) {
+            if (service.update(review, point, removeFileIds, files)) {
                 // 별점(point)를 @RequestParam 어노테이션으로 받아서 서비스로 넘김
                 return ResponseEntity.ok().build();
             } else {

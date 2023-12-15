@@ -188,7 +188,7 @@ public class ReviewService {
 
     public boolean update(Review review, Integer point,
                           List<Integer> removeFileIds,
-                          MultipartFile[] uploadFiles) throws IOException {
+                          MultipartFile[] files) throws IOException {
         // 파일 수정은 데이터베이스의 값을 변경하는것이 아니라서
         // aws에 있는 파일을 지우고 새로운 파일을 추가하는 방식으로 사용
         // 파일 지우기
@@ -209,8 +209,8 @@ public class ReviewService {
             }
         }
         // 파일 추가하기
-        if (uploadFiles != null) {
-            for (MultipartFile file : uploadFiles) {
+        if (files != null) {
+            for (MultipartFile file : files) {
                 // s3에서 추가하기
                 upload(file, review.getNo());
 
@@ -224,7 +224,7 @@ public class ReviewService {
         return mapper.update(review) == 1;
     }
 
-    public boolean validate(Review review) {
+    public boolean validate(Review review, Integer point) {
         if (review == null) {
             return false;
         }
@@ -238,6 +238,10 @@ public class ReviewService {
         }
 
         if (review.getRecommend() == null || review.getRecommend().isBlank()) {
+            return false;
+        }
+
+        if (point == null || point == 0) {
             return false;
         }
         return true;

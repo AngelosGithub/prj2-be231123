@@ -13,7 +13,7 @@ public interface StarMapper {
             INSERT INTO starpoint(memberId, reviewId, point)
             VALUES (#{memberId}, #{reviewId}, #{point})
             """)
-    int insert(Integer reviewId, String memberId, int point);
+    int insert(Integer reviewId, String memberId, Integer point);
 
     @Delete("""
             DELETE FROM starpoint
