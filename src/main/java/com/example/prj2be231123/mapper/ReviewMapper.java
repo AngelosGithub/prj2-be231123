@@ -22,9 +22,11 @@ public interface ReviewMapper {
                    m.nickName,
                    r.writer,
                    r.inserted,
+                   st.point starPoint,
                    COUNT(c.no) countComment
             FROM review r JOIN member m ON r.writer = m.id
                           LEFT JOIN comment c ON r.no = c.reviewId
+                          JOIN starpoint st ON r.no = st.reviewId
             WHERE r.content LIKE #{keyword}
                OR r.title LIKE #{keyword}
             GROUP BY r.no
