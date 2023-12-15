@@ -1,8 +1,6 @@
 package com.example.prj2be231123.service;
 
-import com.example.prj2be231123.domain.Member;
-import com.example.prj2be231123.domain.Review;
-import com.example.prj2be231123.domain.ReviewFile;
+import com.example.prj2be231123.domain.*;
 import com.example.prj2be231123.mapper.CommentMapper;
 import com.example.prj2be231123.mapper.FileMapper;
 import com.example.prj2be231123.mapper.ReviewMapper;
@@ -19,6 +17,7 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,10 +81,13 @@ public class ReviewService {
         // s3 bucket에 파일 업로드 하는 코드
     }
 
-    public Map<String, Object> list(Integer page, String keyword, Integer no) {
+    public HashMap<String, Object> list(Integer page, String keyword, Integer no) {
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> pageInfo = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
+        HashMap<String, Object> pageInfo = new HashMap<>();
+
+//        List<Review> reviewList = new ArrayList<>();
+        // TODO : 리뷰 리스트에 사진 나오도록 수정중
 
         int from = (page - 1) * 9;
         // 페이지 나누기 위한 코드
@@ -132,7 +134,19 @@ public class ReviewService {
             pageInfo.put("nextPage", nextPage);
         }
 
+//        for (Review review : reviewList) {
+//            List<ReviewFile> files = fileMapper.selectFilesById(review.getNo());
+//
+//            for (ReviewFile file : files) {
+//                String url = urlPrefix + "prj2/review/" + review.getNo() + "/" + file.getFileName();
+//                file.setUrl(url);
+//            }
+//            review.setFiles(files);
+//        }
+        // 리뷰 리스트에 사진 나오도록 수정중
+
         map.put("pageInfo", pageInfo);
+//        map.put("reviewList", reviewList);
 
         return map;
     }
