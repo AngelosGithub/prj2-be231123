@@ -45,9 +45,11 @@ public interface ReviewMapper {
                    r.writer,
                    m.nickName,
                    r.inserted,
+                   re.place,
                    st.point starPoint
             FROM review r JOIN member m ON r.writer = m.id
                           JOIN starpoint st ON r.no = st.reviewId
+                          JOIN restaurant re ON r.restaurantId = re.no
             WHERE r.no = #{no}
             """)
     Review selectById(Integer no);
