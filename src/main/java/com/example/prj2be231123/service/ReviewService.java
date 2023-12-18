@@ -86,7 +86,7 @@ public class ReviewService {
         HashMap<String, Object> map = new HashMap<>();
         HashMap<String, Object> pageInfo = new HashMap<>();
 
-//        List<Review> reviewList = new ArrayList<>();
+        List<Review> reviewList = new ArrayList<>();
         // TODO : 리뷰 리스트에 사진 나오도록 수정중
 
         int from = (page - 1) * 9;
@@ -96,15 +96,16 @@ public class ReviewService {
 
         if (no == null) {
             countAll = mapper.allPages("%" + keyword + "%");
-            map.put("reviewList", mapper.selectAll(from, "%" + keyword + "%"));
+            reviewList = mapper.selectAll(from, "%" + keyword + "%");
+            map.put("reviewList", reviewList);
             // 검색기능을 위해 keyword 파라미터 추가
         }
 
         if (no != null) {
             // 리뷰 더보기를 눌렀을 때 페이지 지정
-            List<Review> reviews = mapper.selectByRestaurantNo(from, no);
-            map.put("reviewList", reviews);
-            countAll = reviews.size();
+            reviewList = mapper.selectByRestaurantNo(from, no);
+            map.put("reviewList", reviewList);
+            countAll = reviewList.size();
         }
 
         int lastPage = (countAll -1) / 9 + 1;
@@ -134,15 +135,15 @@ public class ReviewService {
             pageInfo.put("nextPage", nextPage);
         }
 
-//        for (Review review : reviewList) {
-//            List<ReviewFile> files = fileMapper.selectFilesById(review.getNo());
-//
-//            for (ReviewFile file : files) {
-//                String url = urlPrefix + "prj2/review/" + review.getNo() + "/" + file.getFileName();
-//                file.setUrl(url);
-//            }
-//            review.setFiles(files);
-//        }
+        for (Review review : reviewList) {
+            List<ReviewFile> files = fileMapper.selectFilesById(review.getNo());
+
+            for (ReviewFile file : files) {
+                String url = urlPrefix + "prj2/review/" + review.getNo() + "/" + file.getFileName();
+                file.setUrl(url);
+            }
+            review.setFiles(files);
+        }
         // 리뷰 리스트에 사진 나오도록 수정중
 
         map.put("pageInfo", pageInfo);
