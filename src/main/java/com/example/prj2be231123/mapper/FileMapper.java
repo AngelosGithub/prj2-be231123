@@ -38,8 +38,16 @@ public interface FileMapper {
     ReviewFile selectById(Integer no);
 
     @Delete("""
-DELETE FROM reviewfile
-WHERE no = #{no}
-""")
+            DELETE FROM reviewfile
+            WHERE no = #{no}
+            """)
     int deleteById(Integer no);
+
+    @Select("""
+                SELECT *
+                FROM reviewfile
+                WHERE reviewId = #{reviewId}
+                LIMIT 1
+            """)
+    List<ReviewFile> selectFilesById(Integer reviewId);
 }

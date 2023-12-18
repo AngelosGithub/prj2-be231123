@@ -13,6 +13,7 @@ public interface ReviewMapper {
             VALUES (#{title}, #{recommend}, #{content}, #{writer}, #{restaurantId})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "no")
+    // 파일 첨부할 글의 번호를 알아냄
     int insert(Review review);
 
     @Select("""
@@ -21,9 +22,11 @@ public interface ReviewMapper {
                    m.nickName,
                    r.writer,
                    r.inserted,
+                   st.point starPoint,
                    COUNT(c.no) countComment
             FROM review r JOIN member m ON r.writer = m.id
                           LEFT JOIN comment c ON r.no = c.reviewId
+                          JOIN starpoint st ON r.no = st.reviewId
             WHERE r.content LIKE #{keyword}
                OR r.title LIKE #{keyword}
             GROUP BY r.no
@@ -39,8 +42,10 @@ public interface ReviewMapper {
                    r.content,
                    r.writer,
                    m.nickName,
-                   r.inserted
+                   r.inserted,
+                   st.point starPoint
             FROM review r JOIN member m ON r.writer = m.id
+                          JOIN starpoint st ON r.no = st.reviewId
             WHERE r.no = #{no}
             """)
     Review selectById(Integer no);
@@ -99,9 +104,11 @@ public interface ReviewMapper {
     List<Integer> selectIdListByMemberId(String writer);
 
     @Select("""
-            SELECT COUNT(*) FROM review;
+            SELECT COUNT(*) FROM review
+            WHERE title LIKE #{keyword}
+               OR content LIKE #{keyword};
             """)
-    int allPages();
+    int allPages(String keyword);
 
 
     @Select("""
@@ -110,4 +117,21 @@ public interface ReviewMapper {
                 WHERE restaurantId = #{restaurantId}
             """)
     List<Integer> selectListByRestaurantNo(Integer no);
+
+    @Select("""
+            SELECT r.no,
+                   r.title,
+                   m.nickName,
+                   r.writer,
+                   r.inserted,
+                   r.restaurantId,
+                   COUNT(c.no) countComment
+            FROM review r JOIN member m ON r.writer = m.id
+                          LEFT JOIN comment c ON r.no = c.reviewId
+            WHERE restaurantId = #{restaurantId}
+            GROUP BY r.no
+            ORDER BY r.no DESC
+            LIMIT #{from}, 9;
+""")
+    List<Review> selectByRestaurantNo(Integer from, Integer restaurantId);
 }
