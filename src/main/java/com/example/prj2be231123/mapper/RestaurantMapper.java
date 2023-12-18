@@ -37,6 +37,7 @@ public interface RestaurantMapper {
                join starpoint st
                   on st.reviewId = rv.no
              WHERE r.no= #{no};
+             
             """)
     Restaurant getId(Integer no);
 
@@ -67,10 +68,10 @@ public interface RestaurantMapper {
                 <when test="category == 'all' or category == 'place' ">
                             OR place LIKE #{keyword}
                 </when>
-                             
-                    <when test="category == 'all' or category == 'district'">
+                       
+               <when test="category == 'all' or category == 'district'">
                             OR district LIKE #{keyword}
-                    </when>
+                  </when>
                
                  </choose>  
            </trim>
@@ -111,6 +112,7 @@ public interface RestaurantMapper {
                 </trim>
              </where>  
             </script>
+            
             """)
     int countAll(Integer restaurantType,String keyword, String category);
 
@@ -144,28 +146,29 @@ public interface RestaurantMapper {
                 FROM restaurant
                 WHERE no = #{no}
                 ORDER BY  no DESC 
-            
-
             """)
     List<Restaurant> getIdSelectAll(Integer no);
 
 
     @Select("""
-                SELECT rt.no,rt.place,rs.name AS typeName
-                FROM restaurant rt LEFT JOIN restauranttypes rs
-                ON  rt.restaurantType = rs.no
-                WHERE name=  #{name}
-                ORDER BY rs.name DESC
-                LIMIT 3;
+            SELECT
+            rt.no,
+            rt.place,
+            rs.name AS typeName,
+            AVG(st.point) starPoint
+            FROM restaurant rt LEFT JOIN restauranttypes rs
+            ON  rt.restaurantType = rs.no
+            left join review rv
+            on rt.no = rv.restaurantId
+            left join starpoint st
+            on rv.no = st.reviewId
+            WHERE name=  #{name}
+            GROUP BY rt.no
+            ORDER BY rt.no DESC 
+            LIMIT 3
             """)
     List<Restaurant> getTypeName(String name);
 
 
-    @Select("""
-           
-            SELECT *
-            FROM restaurant
-            WHERE restaurantType =#{restaurantType}
-            """)
-    List<Restaurant> getDetail(Integer restaurantType);
+
 }

@@ -51,6 +51,8 @@ public interface RestaurantPurposeJoinMapper {
                 SELECT DISTINCT (restaurantNo)
                 FROM restaurantjoin
                 WHERE purposeNo = #{purposeNo}
+                ORDER BY  no DESC 
+                
             """)
     List<Integer> selectByRestaurantsNo(Integer purposeNo);
 }
