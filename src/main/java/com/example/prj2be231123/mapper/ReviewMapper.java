@@ -78,6 +78,7 @@ public interface ReviewMapper {
              FROM review rv left join starpoint st
                      on rv.no = st.reviewId
              WHERE restaurantId = #{restaurantId}
+             ORDER BY rv.no DESC
              LIMIT 3;
             """)
     List<Review> selectByRestaurant(Integer restaurantId);

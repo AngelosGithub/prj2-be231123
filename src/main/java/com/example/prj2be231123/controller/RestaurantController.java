@@ -63,11 +63,11 @@ public class RestaurantController {
 
     @GetMapping("list")
     public  HashMap<String,Object> list(
-            @RequestParam(value = "p",defaultValue = "1") Integer page
-            ,@RequestParam(value= "k",defaultValue = "") String keyword,
+            @RequestParam(value = "p",defaultValue = "1") Integer page,
+            @RequestParam(value= "k",defaultValue = "") String keyword,
             @RequestParam(value = "c",defaultValue = "all") String category,
-            @RequestParam(value = "purpose",defaultValue = "")List<String>  checkBoxIds
-            ,@RequestParam(value ="typeNo",defaultValue = "0")Integer typeno
+            @RequestParam(value = "purpose",defaultValue = "")List<String>  checkBoxIds,
+            @RequestParam(value ="typeNo",defaultValue = "0")Integer typeno
     ){
 
 
