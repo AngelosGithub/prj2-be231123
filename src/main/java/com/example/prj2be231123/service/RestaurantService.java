@@ -181,11 +181,11 @@ public class RestaurantService {
 
         int lastPageNumber = (countAll - 1) / 6+ 1;
 
-        int startPageNumber = (page - 1) / 6 * 6 + 1;
+        int startPageNumber = (page - 1) / 5 * 5+ 1;
 
-        int endPageNumber = startPageNumber + 5;
+        int endPageNumber = startPageNumber + 4;
 
-        int prevPageNumber = startPageNumber - 6;
+        int prevPageNumber = startPageNumber - 5;
         int nextPageNumber = endPageNumber + 1;
 
         endPageNumber = Math.min(endPageNumber, lastPageNumber);

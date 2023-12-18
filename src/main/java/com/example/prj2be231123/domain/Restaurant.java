@@ -31,6 +31,8 @@ public class Restaurant {
 
     private int starPoint;
 
+    private  Integer reviewCount;
+
     private String typeName;
 
     private List<RestaurantFile> files;
