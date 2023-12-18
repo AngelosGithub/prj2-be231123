@@ -87,7 +87,6 @@ public class ReviewService {
         HashMap<String, Object> pageInfo = new HashMap<>();
 
         List<Review> reviewList = new ArrayList<>();
-        // TODO : 리뷰 리스트에 사진 나오도록 수정중
 
         int from = (page - 1) * 9;
         // 페이지 나누기 위한 코드

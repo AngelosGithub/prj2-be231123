@@ -18,6 +18,7 @@ public class Review {
     private LocalDateTime inserted;
     private Integer countComment;
     private Integer starPoint;
+    private String place;
 
     private List<ReviewFile> files;
 

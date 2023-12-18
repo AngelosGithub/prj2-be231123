@@ -19,6 +19,7 @@ public interface ReviewMapper {
     @Select("""
             SELECT r.no,
                    r.title,
+                   re.place,
                    m.nickName,
                    r.writer,
                    r.inserted,
@@ -27,8 +28,10 @@ public interface ReviewMapper {
             FROM review r JOIN member m ON r.writer = m.id
                           LEFT JOIN comment c ON r.no = c.reviewId
                           JOIN starpoint st ON r.no = st.reviewId
+                          LEFT JOIN restaurant re ON r.restaurantId = re.no
             WHERE r.content LIKE #{keyword}
                OR r.title LIKE #{keyword}
+               OR re.place LIKE #{keyword}
             GROUP BY r.no
             ORDER BY r.no DESC
             LIMIT #{from}, 9;
@@ -43,9 +46,11 @@ public interface ReviewMapper {
                    r.writer,
                    m.nickName,
                    r.inserted,
+                   re.place,
                    st.point starPoint
             FROM review r JOIN member m ON r.writer = m.id
                           JOIN starpoint st ON r.no = st.reviewId
+                          JOIN restaurant re ON r.restaurantId = re.no
             WHERE r.no = #{no}
             """)
     Review selectById(Integer no);
@@ -80,8 +85,8 @@ public interface ReviewMapper {
                      rv.writer,
                      rv.inserted,
                      st.point starPoint
-             FROM review rv left join starpoint st
-                     on rv.no = st.reviewId
+             FROM review rv LEFT JOIN starpoint st
+                     ON rv.no = st.reviewId
              WHERE restaurantId = #{restaurantId}
              ORDER BY rv.no DESC
              LIMIT 3;
@@ -104,9 +109,10 @@ public interface ReviewMapper {
     List<Integer> selectIdListByMemberId(String writer);
 
     @Select("""
-            SELECT COUNT(*) FROM review
-            WHERE title LIKE #{keyword}
-               OR content LIKE #{keyword};
+            SELECT COUNT(*)
+            FROM review r LEFT JOIN restaurant re ON r.restaurantId = re.no
+            WHERE
+            re.place LIKE #{keyword};
             """)
     int allPages(String keyword);
 
@@ -121,6 +127,7 @@ public interface ReviewMapper {
     @Select("""
             SELECT r.no,
                    r.title,
+                   re.place,
                    m.nickName,
                    r.writer,
                    r.inserted,
@@ -130,10 +137,11 @@ public interface ReviewMapper {
             FROM review r JOIN member m ON r.writer = m.id
                           LEFT JOIN comment c ON r.no = c.reviewId
                           LEFT JOIN starpoint st ON st.reviewId = r.no
+                          LEFT JOIN restaurant re ON r.restaurantId = re.no
             WHERE restaurantId = #{restaurantId}
             GROUP BY r.no
             ORDER BY r.no DESC
             LIMIT #{from}, 9;
-""")
+            """)
     List<Review> selectByRestaurantNo(Integer from, Integer restaurantId);
 }
