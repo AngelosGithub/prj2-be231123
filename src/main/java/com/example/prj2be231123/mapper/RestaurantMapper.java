@@ -52,6 +52,7 @@ public interface RestaurantMapper {
                 rt.phone,
                 rt.restaurantType,
                 rt.city,
+                COUNT(rv.no) reviewCount,
                 AVG(st.point) starPoint
                 FROM restaurant rt left JOIN review rv
                 on rt.no = rv.restaurantId
