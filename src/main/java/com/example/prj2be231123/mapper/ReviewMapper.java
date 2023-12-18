@@ -31,6 +31,7 @@ public interface ReviewMapper {
                           LEFT JOIN restaurant re ON r.restaurantId = re.no
             WHERE r.content LIKE #{keyword}
                OR r.title LIKE #{keyword}
+               OR re.place LIKE #{keyword}
             GROUP BY r.no
             ORDER BY r.no DESC
             LIMIT #{from}, 9;
@@ -108,9 +109,10 @@ public interface ReviewMapper {
     List<Integer> selectIdListByMemberId(String writer);
 
     @Select("""
-            SELECT COUNT(*) FROM review
-            WHERE title LIKE #{keyword}
-               OR content LIKE #{keyword};
+            SELECT COUNT(*)
+            FROM review r LEFT JOIN restaurant re ON r.restaurantId = re.no
+            WHERE
+            re.place LIKE #{keyword};
             """)
     int allPages(String keyword);
 
