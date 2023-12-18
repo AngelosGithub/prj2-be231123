@@ -125,9 +125,11 @@ public interface ReviewMapper {
                    r.writer,
                    r.inserted,
                    r.restaurantId,
+                   st.point starPoint,
                    COUNT(c.no) countComment
             FROM review r JOIN member m ON r.writer = m.id
                           LEFT JOIN comment c ON r.no = c.reviewId
+                          LEFT JOIN starpoint st ON st.reviewId = r.no
             WHERE restaurantId = #{restaurantId}
             GROUP BY r.no
             ORDER BY r.no DESC

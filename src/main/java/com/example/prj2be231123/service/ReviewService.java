@@ -254,10 +254,6 @@ public class ReviewService {
         if (review.getRecommend() == null || review.getRecommend().isBlank()) {
             return false;
         }
-
-        if (point == null || point == 0) {
-            return false;
-        }
         return true;
     }
 
