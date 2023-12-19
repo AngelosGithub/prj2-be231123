@@ -55,10 +55,11 @@ public class ReviewController {
     @GetMapping("list")
     public HashMap<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
                                         @RequestParam(value = "k", defaultValue = "") String keyword,
+                                        @RequestParam(value = "c", defaultValue = "all") String category,
                                         @RequestParam(value = "restaurantNo", defaultValue = "") Integer no) {
         // 페이지를 나누기 위한 프로퍼티 입력
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
-        return service.list(page, keyword, no);
+        return service.list(page, keyword, category, no);
     }
 
     @GetMapping("no/{no}")
