@@ -39,7 +39,6 @@ public class RestaurantController {
             @RequestParam(value = "uploadFiles[]" ,required = false)MultipartFile[] files,
             @SessionAttribute(value = "login",required = false)Member login
     )throws IOException  {
-
         if(login==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }
@@ -105,6 +104,7 @@ public class RestaurantController {
         }
 
 
+
         if(!service.hasAccess(login)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -129,16 +129,21 @@ public class RestaurantController {
             @SessionAttribute(value = "login",required = false) Member login
     )throws IOException{
 
+        System.out.println("removeFileIds = " + removeFileIds);
+
         if(login==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }
 
+        if (!service.validFileNumber(removeFileIds,uploadFiles,restaurant)){
+            return ResponseEntity.badRequest().build();
+        }
 
         if(!service.hasAccess(login)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if(!service.restaurantValidate(restaurant,restaurantTypeName,restaurantPurpose,uploadFiles)){
+        if(!service.restaurantValidate(restaurant,restaurantTypeName,restaurantPurpose,uploadFiles) ){
             return ResponseEntity.badRequest().build();
         }
 

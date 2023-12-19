@@ -351,9 +351,12 @@ public class RestaurantService {
             return false;
         }
 
-        if(files ==null){
+        //
+        if(restaurant.getNo()==0 && files ==null){
+
             return false;
         }
+
 
         return  true;
     }
@@ -411,4 +414,19 @@ public class RestaurantService {
     }
 
 
+    public boolean validFileNumber(List<Integer> removeFileIds, MultipartFile[] uploadFiles, Restaurant restaurant) {
+
+        // 파일 갯수 조회해서 removerFileIds 랑 같은 상황에서  uploadFiles가 null 인경우
+
+        Integer fileCount = mapper.selectFileCount(restaurant.getNo()); // 레스토랑 파일 이미지 count 조회
+        System.out.println("fileCount = " + fileCount);
+
+       if (removeFileIds != null){
+           if(removeFileIds.size() == fileCount && uploadFiles==null){
+               return false;
+           }
+       }
+
+        return true;
+    }
 }
