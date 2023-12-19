@@ -87,7 +87,7 @@ public class ReviewService {
 
         List<Review> reviewList = new ArrayList<>();
 
-        int from = (page - 1) * 9;
+        int from = (page - 1) * 6;
         // 페이지 나누기 위한 코드
         int countAll =0;
         // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
@@ -106,15 +106,15 @@ public class ReviewService {
             countAll = reviewList.size();
         }
 
-        int lastPage = (countAll -1) / 9 + 1;
+        int lastPage = (countAll -1) / 6 + 1;
         // 전체 글의 갯수를 토대로 마지막 페이지를 구하는 계산식
 
-        int startPageNum = (page -1) / 10 * 10 + 1;
-        int endPageNum = startPageNum + 9;
+        int startPageNum = (page -1) / 5 * 5 + 1;
+        int endPageNum = startPageNum + 4;
         endPageNum = Math.min(endPageNum, lastPage);
         // 페이지의 시작과 끝을 넣을 변수
 
-        int prevPage = startPageNum - 10;
+        int prevPage = startPageNum - 5;
         int nextPage = endPageNum;
         // 페이지 이동 버튼 만들때 필요한 계산식
         // 페이지 이동 버튼 만들때 필요한 계산식

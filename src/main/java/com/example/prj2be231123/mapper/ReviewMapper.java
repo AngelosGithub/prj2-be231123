@@ -42,7 +42,7 @@ public interface ReviewMapper {
                 </trim>
             GROUP BY r.no
             ORDER BY r.no DESC
-            LIMIT #{from}, 9;
+            LIMIT #{from}, 6;
             </script>
             """)
     List<Review> selectAll(Integer from, String keyword, String category);
