@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 //  Transactional 전체 코드가 실행되어야 함
 @Transactional(rollbackFor = Exception.class)
@@ -81,7 +80,7 @@ public class ReviewService {
         // s3 bucket에 파일 업로드 하는 코드
     }
 
-    public HashMap<String, Object> list(Integer page, String keyword, Integer no) {
+    public HashMap<String, Object> list(Integer page, String keyword, String category, Integer no) {
         // List<Review> 리스트로 데이터를 넘겼는데 Map으로 변경
         HashMap<String, Object> map = new HashMap<>();
         HashMap<String, Object> pageInfo = new HashMap<>();
@@ -94,8 +93,8 @@ public class ReviewService {
         // 마지막 페이지를 구하기위해 모든 글의 갯수를 구한다
 
         if (no == null) {
-            countAll = mapper.allPages("%" + keyword + "%");
-            reviewList = mapper.selectAll(from, "%" + keyword + "%");
+            countAll = mapper.allPages("%" + keyword + "%", category);
+            reviewList = mapper.selectAll(from, "%" + keyword + "%", category);
             map.put("reviewList", reviewList);
             // 검색기능을 위해 keyword 파라미터 추가
         }

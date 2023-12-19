@@ -17,6 +17,7 @@ public interface ReviewMapper {
     int insert(Review review);
 
     @Select("""
+            <script>
             SELECT r.no,
                    r.title,
                    re.place,
@@ -29,14 +30,22 @@ public interface ReviewMapper {
                           LEFT JOIN comment c ON r.no = c.reviewId
                           JOIN starpoint st ON r.no = st.reviewId
                           LEFT JOIN restaurant re ON r.restaurantId = re.no
-            WHERE r.content LIKE #{keyword}
-               OR r.title LIKE #{keyword}
-               OR re.place LIKE #{keyword}
+            WHERE
+                <trim prefixOverrides="OR">
+                    <if test="category == 'all' or category == 'title'">
+                        OR r.title LIKE #{keyword}
+                        OR re.place LIKE #{keyword}
+                    </if>
+                    <if test="category == 'all' or category == 'content'">
+                        OR r.content LIKE #{keyword}
+                    </if>
+                </trim>
             GROUP BY r.no
             ORDER BY r.no DESC
             LIMIT #{from}, 9;
+            </script>
             """)
-    List<Review> selectAll(Integer from, String keyword);
+    List<Review> selectAll(Integer from, String keyword, String category);
 
     @Select("""
             SELECT r.no,
@@ -47,6 +56,7 @@ public interface ReviewMapper {
                    m.nickName,
                    r.inserted,
                    re.place,
+                   r.restaurantId,
                    st.point starPoint
             FROM review r JOIN member m ON r.writer = m.id
                           JOIN starpoint st ON r.no = st.reviewId
@@ -109,12 +119,22 @@ public interface ReviewMapper {
     List<Integer> selectIdListByMemberId(String writer);
 
     @Select("""
+            <script>
             SELECT COUNT(*)
             FROM review r LEFT JOIN restaurant re ON r.restaurantId = re.no
             WHERE
-            re.place LIKE #{keyword};
+                <trim prefixOverrides="OR">
+                    <if test="category == 'all' or category == 'title'">
+                        OR r.title LIKE #{keyword}
+                        OR re.place LIKE #{keyword}
+                    </if>
+                    <if test="category == 'all' or category == 'content'">
+                        OR r.content LIKE #{keyword}
+                    </if>
+                </trim>
+            </script>
             """)
-    int allPages(String keyword);
+    int allPages(String keyword, String category);
 
 
     @Select("""
