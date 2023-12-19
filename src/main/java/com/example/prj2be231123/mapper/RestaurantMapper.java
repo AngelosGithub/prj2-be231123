@@ -60,20 +60,17 @@ public interface RestaurantMapper {
                 on st.reviewId = rv.no
            <where>
            <trim prefixOverrides="OR">
-              <choose>
-               <when test="restaurantType != 0">
-                     restaurantType= #{restaurantType}
-               </when>
-             
-                <when test="category == 'all' or category == 'place' ">
-                            OR place LIKE #{keyword}
-                </when>
-                       
-               <when test="category == 'all' or category == 'district'">
-                            OR district LIKE #{keyword}
-                  </when>
-               
-                 </choose>
+              <if test="restaurantType != 0"> 
+                 restaurantType= #{restaurantType} 
+              </if>
+              <if test="restaurantType == 0 ">
+                <if test="category == 'all' or category == 'place' "> 
+                 OR place LIKE #{keyword} 
+                 </if>
+                 <if test="category == 'all' or category == 'district'">
+                 OR district LIKE #{keyword}
+                 </if>
+              </if>
            </trim>
           </where>
           GROUP BY rt.no
@@ -95,20 +92,18 @@ public interface RestaurantMapper {
                 FROM restaurant
               <where>
                 <trim prefixOverrides="OR">
-                 <choose>
-                 <when test="restaurantType != 0">
-                     restaurantType= #{restaurantType}
-               </when>
-             
-                   <when test="category == 'all' or category == 'place' ">
-                            OR place LIKE #{keyword}
-                    </when>
-                             
-                    <when test="category == 'all' or category == 'district'">
-                            OR district LIKE #{keyword}
-                    </when>
-               
-                 </choose>
+                <if test="restaurantType != 0"> 
+                 restaurantType= #{restaurantType} 
+                 </if>
+                <if test="restaurantType == 0 ">
+                    <if test="category == 'all' or category == 'place' "> 
+                     OR place LIKE #{keyword} 
+                     </if>
+                     <if test="category == 'all' or category == 'district'">
+                     OR district LIKE #{keyword}
+                     </if>
+                </if>
+
                 </trim>
              </where>  
             </script>
@@ -155,6 +150,7 @@ public interface RestaurantMapper {
             rt.no,
             rt.place,
             rs.name AS typeName,
+            COUNT(rv.no) reviewCount,
             AVG(st.point) starPoint
             FROM restaurant rt LEFT JOIN restauranttypes rs
             ON  rt.restaurantType = rs.no
@@ -171,4 +167,11 @@ public interface RestaurantMapper {
 
 
 
+    @Select("""
+                SELECT COUNT(rf.no)
+                FROM restaurant rt LEFT JOIN restaurantfile rf
+                    ON rt.no = rf.restaurantNo
+                WHERE restaurantNo= #{restaurantNo}
+            """)
+    Integer selectFileCount(int restaurantNo);
 }
