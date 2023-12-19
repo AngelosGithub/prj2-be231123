@@ -129,8 +129,6 @@ public class RestaurantController {
             @SessionAttribute(value = "login",required = false) Member login
     )throws IOException{
 
-        System.out.println("removeFileIds = " + removeFileIds);
-
         if(login==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }

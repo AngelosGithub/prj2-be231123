@@ -164,4 +164,12 @@ public interface ReviewMapper {
             LIMIT #{from}, 9;
             """)
     List<Review> selectByRestaurantNo(Integer from, Integer restaurantId);
+
+    @Select("""
+                SELECT COUNT(rf.no)
+                FROM review r LEFT JOIN reviewfile rf
+                    ON r.no = rf.reviewId
+                WHERE reviewId= #{reviewId}
+            """)
+    Integer selectFileCount(Integer no);
 }

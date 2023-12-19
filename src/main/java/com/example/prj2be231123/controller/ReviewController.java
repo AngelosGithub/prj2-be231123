@@ -21,7 +21,7 @@ public class ReviewController {
 
     @PostMapping("add")
     public ResponseEntity add(Review review,
-                              @RequestParam(value = "no", required = false) Integer no,
+                              @RequestParam(value = "restaurantId", required = false) Integer no,
                               @RequestParam(value = "point", required = false) Integer point,
                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
@@ -32,14 +32,13 @@ public class ReviewController {
 //                System.out.println("file = " + files[i].getSize());
 //            }
 //        }
-//        System.out.println("review = " + review);
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         // 맛집정보 받아올때까지 주석
-        if (!service.validate(review, point)) {
+        if (!service.validate(review, files)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -92,15 +91,20 @@ public class ReviewController {
                                @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                                @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
+
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.valiFileNumber(removeFileIds, files, review)){
+            return ResponseEntity.badRequest().build();
         }
 
         if (!service.hasAccess(review.getNo(), login)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if (service.validate(review, point)) {
+        if (service.validate(review, files)) {
             if (service.update(review, point, removeFileIds, files)) {
                 // 별점(point)를 @RequestParam 어노테이션으로 받아서 서비스로 넘김
                 return ResponseEntity.ok().build();

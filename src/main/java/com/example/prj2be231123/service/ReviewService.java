@@ -237,7 +237,7 @@ public class ReviewService {
         return mapper.update(review) == 1;
     }
 
-    public boolean validate(Review review, Integer point) {
+    public boolean validate(Review review, MultipartFile[] files) {
         if (review == null) {
             return false;
         }
@@ -253,6 +253,12 @@ public class ReviewService {
         if (review.getRecommend() == null || review.getRecommend().isBlank()) {
             return false;
         }
+
+        if (review.getNo() == null && files == null) {
+            return false;
+        }
+
+
         return true;
     }
 
@@ -268,5 +274,22 @@ public class ReviewService {
         Review review = mapper.selectById(no);
 
         return review.getWriter().equals(login.getId());
+    }
+
+    public boolean valiFileNumber(List<Integer> removeFileIds, MultipartFile[] files, Review review) {
+        // 파일 갯수 조회해서 removerFileIds 랑 같은 상황에서  files가 null 인경우
+
+        Integer fileCount = mapper.selectFileCount(review.getNo());
+        // 레스토랑 파일 이미지 count 조회
+        System.out.println("fileCount = " + fileCount);
+        System.out.println("removeFileIds = " + removeFileIds);
+
+        if (removeFileIds != null){
+            if(removeFileIds.size() == fileCount && files==null){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
