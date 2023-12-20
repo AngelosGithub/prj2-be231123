@@ -267,7 +267,7 @@ public class ReviewService {
             return false;
         }
 
-        if (login.isAdmin()) {
+        if (!login.isAdmin()) {
             return true;
         }
 
